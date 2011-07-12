@@ -1,0 +1,82 @@
+<html>
+	<head>
+		<title>TextGenerator</title>
+		<style>
+		</style>
+		<script type="text/javascript">
+			Maennlich=function(){
+				this.id;
+				this.idWessen;
+				this.Artikel='der';
+				this.ARTIKEL='Der';
+				this.WenFall='den';
+				this.WENFALL='Den';
+				this.WessenFall='des';
+				this.WESSENFALL='Des';
+				this.WemFall='dem';
+				this.WEMFALL='Dem';
+			}
+			Weiblich=function(){
+				this.id;
+				this.idWessen;
+				this.Artikel='die';
+				this.ARTIKEL='Die';
+				this.WenFall='die';
+				this.WENFALL='Die';
+				this.WessenFall='der';
+				this.WESSENFALL='Der';
+				this.WemFall='der';
+				this.WEMFALL='Der';
+			}
+			Saechlich=function(){
+				this.id;
+				this.idWessen;
+				this.Artikel='das';
+				this.ARTIKEL='Das';
+				this.WenFall='das';
+				this.WENFALL='Das';
+				this.WessenFall='des';
+				this.WESSENFALL='Des';
+				this.WemFall='dem';
+				this.WEMFALL='Dem';
+			}
+			Moench=new Maennlich();
+			Moench.id='Moench';
+			Moench.idWessen='Moenches';
+			Amazone=new Weiblich();
+			Amazone.id='Amazone';
+			Amazone.idWessen='Amazone';
+			Schrankfach=new Saechlich();
+			Schrankfach.id='Schrankfach';
+			Schrankfach.idWessen='Schrankfaches';
+
+			Dolch=new Maennlich();
+			Dolch.id='Dolch';
+			Dolch.idWessen='Dolches';
+			Hellebarde=new Weiblich();
+			Hellebarde.id='Hellebarde';
+			Hellebarde.idWessen='Hellebarde';
+			Messer=new Saechlich();
+			Messer.id='Messer';
+			Messer.idWessen='Messers';
+			
+			AlleGegner=[Moench,Amazone,Schrankfach];
+			AlleWaffen=[Dolch,Hellebarde,Messer];
+			AktuelleWaffe=AlleWaffen[parseInt(Math.random()*AlleWaffen.length)]
+			GegnerWaffenAktion=[' greift an. Mit',' attakiert dich mit',' bedroht dich mit',' fuchtelt mit'];
+			GegnerAktion=[' versteckt sich hinterm Busch.',' stuermt an!',' lasst dich erstmal machen.',' greift an!'];
+			DeineChancen=['Du hast niemals eine Chance gegen ','Das wird nicht leicht gegen ','Mit deinen Kraeften schaffst du ','Du besiegst locker '];
+			AktuellerGegner=AlleGegner[parseInt(Math.random()*AlleGegner.length)];
+			AktuellerGegnerAktion=GegnerAktion[parseInt(Math.random()*GegnerAktion.length)];
+			AktuellerDeineChancen=DeineChancen[parseInt(Math.random()*DeineChancen.length)];
+			AktuellerGegnerWaffenAktion=GegnerWaffenAktion[parseInt(Math.random()*GegnerWaffenAktion.length)];
+			alert(AktuellerGegner.ARTIKEL+' '+AktuellerGegner.id+AktuellerGegnerAktion);
+			alert(AktuellerDeineChancen+AktuellerGegner.WenFall+' '+AktuellerGegner.id);
+			alert(AktuellerGegner.ARTIKEL+' '+AktuellerGegner.id+AktuellerGegnerWaffenAktion+' '+AktuelleWaffe.WemFall+' '+AktuelleWaffe.id);
+			alert('Blut klebt an der Schneide '+AktuelleWaffe.WessenFall+' '+AktuelleWaffe.idWessen);
+			alert('Du wurdest von '+AktuelleWaffe.WemFall+' '+AktuelleWaffe.id+' verletzt');
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

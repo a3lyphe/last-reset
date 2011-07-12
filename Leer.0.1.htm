@@ -1,0 +1,1623 @@
+<html>
+	<head>
+		<title>Last-Reset Version:MunteFusch</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="Css.css"/>
+		<link rel="shortcut icon" type="image/x-icon" href="Last Reset Favicon.ico"/>
+		<style>
+		</style>
+		<script type="text/javascript">
+			$=function(id){return(document.getElementById(id));};
+		</script>
+		<script type="text/javascript">
+			Fenster=function(){
+				this.Id='';
+				this.Posi=function(){
+					this.Left=0;
+					this.Top=0;
+					this.Width=0;
+					this.Height=0;
+				}
+				this.PosiRand='xxx';
+				this.Rang=0;
+			}
+
+			VerschiebungX=0;
+			VerschiebungY=0;
+
+			RandUnten='';
+			RandRechts='';
+			dasInventoryHTML='';
+
+			ToterGegnerCounter=0;
+			LeftVary=0;
+			TopVary=0;
+			JaEsGibtSieUndZwarNR=0;
+			WuerfelAugenZahlLinks=0;
+			WuerfelAugenZahlRechts=0;
+			BogenPowerCounter=0;
+			MausX=0;
+			MausY=0;
+			WasNR=0;
+			BauJetztVariationsCounter=0;
+			BaumZFVary=0;
+			BaumIDCounter=0;
+			BaumCounter=0;
+			BaumKonstantenVary=0;
+			BushZFVary=0;
+			BushIDCounter=0;
+			BushCounter=0;
+			RandUnten=0;
+			RandRechts=0;
+			randLinks=0;
+			randOben=0;
+			VerschiebungX=0;
+			VerschiebungY=0;
+			VerschiebungWidth=0;
+			VerschiebungHeight=0;
+			ScrollEbeneImInventory=0;
+			ErschoepfungsCounterLaufen=0;
+			GegenstandsNuemmerchen=0;
+			GegnerCounter=0;
+			FogErfassungsMasseX=0;
+			FogErfassungsMasseY=0;
+			WievieleKochtopfZutatenSindSchonImTopf=0;
+			GleicheGegenStaendeGefunden=0;
+			WievieleSachenBastelnZutatenSindSchonImTopf=0;
+			WievieleKochtopfZutatenSindSchonImTopf=0;
+			GleicheGegenStaendeGefunden=0;
+			GleicheGegenStaendeGefunden=0;
+			var dragx=0;
+			var dragy=0;
+			var posxx=0;
+			var posyy=0;
+			NachtCounter=0;
+			LinksFensterMenge=0;
+			RechtsFensterMenge=0;
+			BGCounter=0;
+			BGStueckeVary=0;
+			BGStueckeVarianten=9;//Bisher Gibt es 9 verschiedene BodenVarianten...Mehr davon..!
+			ToterGegnerHoechstZahl=1000;
+			WasserQuelleMengeWasserVary=10;
+			InventoryZoomFaktor=1;
+			GegnerHaeufigkeit=300;
+			AvatarBild=1;
+			ZwischenRand=10;
+			InventoryZoomFaktor=1;
+			RauschenCounter=1;
+			OpacityCounterMattscheibe=10;
+
+			GameCycleLaueft=false;
+			KarteBecklickbar=true;
+			SchrittmassChecker=false;
+			IstEinBaumImVesier=false;
+			Bogenschalteran=false;
+			IstFogDa=false;
+			AvatarInventoryGecheckt=false;
+			AvatarSkaliert=false;
+			RandSkaliert=false;
+			GibtEsDieKarte=false;
+			var dragobjekt=null;
+			AuszuruestenderKoerperteil=['Kopf','Torso','HandLinks','HandRechts','Beine','Fuesse'];
+
+			AlleFensterButton=['InventoryBoxContainer','CraftingBoxContainer','CharakterBoxContainer','AvatarWerteBoxContainer','VehikelBoxContainer','OptionsBoxContainer','OptionsBox2Container','OptionsBox3Container','OptionsBox4Container','WeltKartenModusContainer'];
+
+			AlleFenster=['VehikelBoxContainer','InventoryBoxContainer','CraftingBoxContainer','CharakterBoxContainer','AvatarWerteBoxContainer','OptionsBoxContainer','OptionsBox2Container','OptionsBox3Container','OptionsBox4Container','WeltKartenModusContainer'];
+
+		//Die festen Werte der Rand-Stueckchen
+			RandNamenArray=['RandOben','Randunten','RandLinks','RandRechts'];
+			for(all in AlleFenster){
+				eval(''+AlleFenster[all]+'RandNamenArray=[\''+AlleFenster[all]+'RandOben\',\''+AlleFenster[all]+'Randunten\',\''+AlleFenster[all]+'RandLinks\',\''+AlleFenster[all]+'RandRechts\']');
+			}
+			RandLeftArray=		[  2,  2,  0, 96];
+			RandTopArray=		[  0, 96,  2,  2];
+			RandWidthArray=	[ 96, 96,  4,  4];
+			RandHeightArray=	[  4  ,4, 96, 96];
+
+		//Diese Arrays geben die positionen fuer die MenuButton-Verschiebung an.
+			KugelnArray=			[ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10];
+			KugelnOnTopArray=		[15, 15, 15, 15, 15, 15, 15, 15, 15, 15];
+			KugelnOffTopArray=	[25, 25, 25, 25, 25, 25, 25, 25, 25, 25];
+			KugelnOnLeftArray=	[25, 85,145,205,265,430,490,550,610,670];
+			KugelnOffLeftArray=	[25, 85,145,205,265,430,490,550,610,670];
+
+			WerteFenster=['Angriff','Ruestung','GesamtGewichtsWert'];
+			NichtAnzeigbareGegenstaende=[];
+			WelcheKochtopfZutatenSindSchonImTopf=[];
+			WelcheSachenBastelnZutatenSindSchonImTopf=[];
+			NichtAnzeigbareGegenstaende=[];
+			WirklichGezeigteGegenstaende=[];
+			AlleFensterPufferArray=[];
+
+		//Alle Fenster werden Initialisiert
+			for(all in AlleFenster){
+				eval(AlleFenster[all]+'=new Fenster();');
+			}
+
+		//Der Rang fuer die Bestimmung der Platzierung wird gesetzt.
+			OptionsBoxContainer.Rang=9;
+			OptionsBox2Container.Rang=8;
+			OptionsBox3Container.Rang=7;
+			OptionsBox4Container.Rang=6;
+			WeltKartenModusContainer.Rang=5;
+			InventoryBoxContainer.Rang=4;
+			CraftingBoxContainer.Rang=3;
+			CharakterBoxContainer.Rang=2;
+			AvatarWerteBoxContainer.Rang=1;
+			VehikelBoxContainer.Rang=0;
+
+		//.Tiny
+			$=function(id){return(document.getElementById(id));};
+
+			for(i=1;i<AlleFensterButton.length+1;i++){
+				eval('Kugel'+i+'Permanent=false');
+			}
+
+
+			BindKeys=function(welchetaste){
+				KartenWechselPruefer();
+				document.onkeydown=function(e){
+					e=e || window.event;
+					switch(e.keyCode){
+						case 78://"N"
+						break;
+						case 82://"R"
+						break;
+						case 73://"I"
+						break;
+						case 74://"J"
+						break;
+						case 76://"L"
+						break;
+						case 75://"K"
+						break;
+						case 87://"W"
+						break;
+						case 83://"S"
+						break;
+						case 65://"A"
+						break;
+						case 68://"D"
+						break;
+					}
+				}
+				document.onkeyup=function(e){
+					e=e || window.event;
+					switch(e.keyCode){
+						case 65:
+						break;
+						case 68:
+						break;
+					}
+				}
+			}
+
+
+			MehrAlsZweimalCounter=0;
+			GegenstandsNuemmerchen=0;
+			DieseGegenstaendeSinsMehrAlsZweimal=[];
+			DieseGegenstaendeSinsMehrAlsZweimalStelle=0;
+
+
+		//init findet als aller erstes statt.
+			init=function(){
+				KugelContainerInit();
+				FensterRangOrdnungSortierer();//Sortiert die Fenster nach Rang-Ordnung
+			}
+
+		//Sortierung der Fenster-Rang-Ordnung
+			FensterRangOrdnungSortierer=function(){
+				for(all in AlleFenster){
+					AlleFensterPufferArray[eval(AlleFenster[all]).Rang]=AlleFenster[all];
+				}
+				for(all in AlleFensterPufferArray){
+					AlleFenster[all]=AlleFensterPufferArray[all];
+				}
+			}
+
+			BGSkalierung=function(){
+				$('theBackground').innerHTML=dieBGHTML;
+				$('theBackground').style.position='absolute';
+				$('theBackground').style.left=EbenenVaryLeft;
+				$('theBackground').style.top=EbenenVaryTop;
+				$('theBackground').style.width=EbenenVaryWidth;
+				$('theBackground').style.height=EbenenVaryHeight;
+			}
+
+			RandSkalierung=function(wer){
+				for(all in wer){
+					$(wer[all]).style.position='absolute';
+					$(wer[all]).style.backgroundImage='url('+wer[all]+'.png)';
+					$(wer[all]).style.left=RandLeftArray[all]+'%';
+					$(wer[all]).style.top=RandTopArray[all]+'%';
+					$(wer[all]).style.width=RandWidthArray[all]+'%';
+					$(wer[all]).style.height=RandHeightArray[all]+'%';
+					$(wer[all]).style.zIndex=10;
+				}
+			}
+
+
+			UngefaehrGegnerLebensPunkte=0;
+			AktuelleLebensPunkteGegner=0;
+
+			BeschleunigungsCounter=0;
+			Beschleunigung=1.2;
+			Geschwindigkeit=2;
+
+			LogoLight=function(KugelNR,Zustand,wasGibts){
+				WelchesKuegelchen='Kugel'+KugelNR;
+				if(Zustand==2&&eval(WelchesKuegelchen+'Permanent==false')){
+					eval(WelchesKuegelchen+'Permanent=true;');
+					$(AlleFensterButton[KugelNR-1]).style.display='block';
+				}
+				else if(Zustand==2&&eval(WelchesKuegelchen+'Permanent==true')){
+					eval(WelchesKuegelchen+'Permanent=false;');
+					$(AlleFensterButton[KugelNR-1]).style.display='none';
+				}
+				if(Zustand==2&&eval(WelchesKuegelchen+'Permanent==false')){
+					$(WelchesKuegelchen).style.top=KugelnOnTopArray[KugelNR-1]+'px';
+					$(WelchesKuegelchen).style.left=KugelnOnLeftArray[KugelNR-1]+'px';
+					$(AlleFensterButton[KugelNR-1]).style.display='none';
+				}else if(Zustand==2&&eval(WelchesKuegelchen+'Permanent==true')){
+					$(WelchesKuegelchen).style.top=KugelnOffTopArray[KugelNR-1]+'px';
+					$(WelchesKuegelchen).style.left=KugelnOffLeftArray[KugelNR-1]+'px';
+					$(AlleFensterButton[KugelNR-1]).style.display='block';
+				}
+				for(all in AlleFenster){
+					eval(AlleFenster[all]+'Skaliert=false;');
+					if($(AlleFenster[all]).style.display=='block'){
+						GroesseAendern($(AlleFenster[all]),AlleFenster[all]);
+					}
+				}
+				AvatarInventoryGecheckt=false;
+				AvatarInventoryChecker();
+			}
+
+			RangOrdnung=function(dragobjekt){
+				for(all in AlleFenster){
+					if($(AlleFenster[all])==dragobjekt){
+						DasDragFenster=AlleFenster[all];
+						RangOrdnungsPuffer1='';
+						RangOrdnungsPuffer2='';
+						if((($(AlleFenster[all]).offsetLeft<=$('Welt').offsetLeft)&&eval(AlleFenster[all]).PosiRand=='links')){
+							for(all in AlleFenster){
+								if($(AlleFenster[all])!=dragobjekt&&eval(AlleFenster[all]).PosiRand=='links'){
+									if($(AlleFenster[all]).offsetTop+$(AlleFenster[all]).offsetHeight>dragobjekt.offsetTop){
+										RangOrdnungsPuffer1=eval(DasDragFenster).Rang;
+										RangOrdnungsPuffer2=eval(AlleFenster[all]).Rang;
+										eval(DasDragFenster).Rang=RangOrdnungsPuffer2;
+										eval(AlleFenster[all]).Rang=RangOrdnungsPuffer1;
+										FensterRangOrdnungSortierer();
+									}else
+									if($(AlleFenster[all]).offsetTop+$(AlleFenster[all]).offsetHeight<dragobjekt.offsetTop){
+										RangOrdnungsPuffer1=eval(DasDragFenster).Rang;
+										RangOrdnungsPuffer2=eval(AlleFenster[all]).Rang;
+										eval(DasDragFenster).Rang=RangOrdnungsPuffer1;
+										eval(AlleFenster[all]).Rang=RangOrdnungsPuffer2;
+										FensterRangOrdnungSortierer();
+									}
+								}
+							}
+						}else
+						if((($(AlleFenster[all]).offsetLeft>$('Welt').offsetLeft)&&eval(AlleFenster[all]).PosiRand=='rechts')){
+							for(all in AlleFenster){
+								if($(AlleFenster[all])!=dragobjekt&&eval(AlleFenster[all]).PosiRand=='rechts'){
+									if($(AlleFenster[all]).offsetTop+$(AlleFenster[all]).offsetHeight>dragobjekt.offsetTop){
+										RangOrdnungsPuffer1=eval(DasDragFenster).Rang;
+										RangOrdnungsPuffer2=eval(AlleFenster[all]).Rang;
+										eval(DasDragFenster).Rang=RangOrdnungsPuffer2;
+										eval(AlleFenster[all]).Rang=RangOrdnungsPuffer1;
+										FensterRangOrdnungSortierer();
+									}else
+									if($(AlleFenster[all]).offsetTop+$(AlleFenster[all]).offsetHeight<dragobjekt.offsetTop){
+										RangOrdnungsPuffer1=eval(DasDragFenster).Rang;
+										RangOrdnungsPuffer2=eval(AlleFenster[all]).Rang;
+										eval(DasDragFenster).Rang=RangOrdnungsPuffer1;
+										eval(AlleFenster[all]).Rang=RangOrdnungsPuffer2;
+										FensterRangOrdnungSortierer();
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			WoSollDerGegenstandAbgelegtWerden='Avatar';
+
+			WeltInDerMitte=true;
+
+			//Diese Function wird benoetigt wenn ein Fenster bewegt wird.Erwartet Das Objekt und dessen id.
+			GroesseAendern=function(wer,werId){
+				//Zuruecksetztung der BerechnungsWerte
+				LinksFensterMenge=0;
+				RechtsFensterMenge=0;
+				LinksFensterVerschiebung=0;
+				RechtsFensterVerschiebung=0;
+				//Hier werden alle sichtbaren Fenster auf ihre Position gegenuebr der Karte geprueft.(links oder rechts)
+				//Falls die Fenstermenge einer seite 5 uebersteigt wird das Fenster auf die andere Seite gepackt.Da nur 5 fenster auf einer Seite moeglich sind.
+				for(all in AlleFenster){
+					if($(AlleFenster[all]).style.display=='block'){
+						if(($(AlleFenster[all]).offsetLeft<=$('Welt').offsetLeft)){
+							if(LinksFensterMenge<5){
+								eval(AlleFenster[all]).PosiRand='links';
+								LinksFensterMenge++;
+							}else
+							if(LinksFensterMenge>=5){
+								eval(AlleFenster[all]).PosiRand='rechts';
+								RechtsFensterMenge++;
+								$(AlleFenster[all]).style.width=window.innerWidth-($('Welt').offsetLeft+$('Welt').offsetWidth)-(ZwischenRand*2);
+								$(AlleFenster[all]).style.left=$('Welt').offsetLeft+$('Welt').offsetWidth+ZwischenRand;
+							}
+						}else
+						if(($(AlleFenster[all]).offsetLeft>=$('Welt').offsetLeft)){
+							if(RechtsFensterMenge<5){
+								eval(AlleFenster[all]).PosiRand='rechts';
+								RechtsFensterMenge++;
+							}else
+							if(RechtsFensterMenge>=5){
+								eval(AlleFenster[all]).PosiRand='links';
+								LinksFensterMenge++;
+								$(AlleFenster[all]).style.width=$('Welt').offsetLeft-(ZwischenRand*2);
+								$(AlleFenster[all]).style.left=ZwischenRand;
+							}
+						}
+					}
+				}
+				//Hier werden die Fenster links oder rechts der Karte positioniert.
+				if(($('Welt').offsetLeft>=20&&(wer.offsetLeft-($('Welt').offsetWidth/2))<$('Welt').offsetLeft)||$('Welt').offsetLeft>=(window.innerWidth-$('Welt').offsetWidth)-(ZwischenRand*2)){//
+					wer.style.width=$('Welt').offsetLeft-(ZwischenRand*2);
+					wer.style.left=ZwischenRand;
+				}else
+				if($('Welt').offsetLeft<=40||wer.offsetLeft+($('Welt').offsetLeft/2)>$('Welt').offsetLeft+$('Welt').offsetWidth-($('Welt').offsetWidth/2)){
+					wer.style.width=window.innerWidth-($('Welt').offsetLeft+$('Welt').offsetWidth)-(ZwischenRand*2);
+					wer.style.left=$('Welt').offsetLeft+$('Welt').offsetWidth+ZwischenRand;
+				}
+				//Wenn ein sechstes Fenster geoeffnet wird und die Karte links oder rechts ist, wird die Karte in die Mitte geschoben.Es koennen hoechstens 5 Fenster auf einer Seite seon
+				if(WeltInDerMitte==false&&((LinksFensterMenge==5&&RechtsFensterMenge>=1)||(RechtsFensterMenge==5&&LinksFensterMenge>=1))){
+					$('Welt').style.left=(window.innerWidth-$('Welt').offsetWidth)/2-5+'px';
+					$('WeltHinterGrundFake').style.left=(window.innerWidth-$('Welt').offsetWidth)/2-5+'px';
+					$('LebensAnzeigeContainer').style.left=$('Welt').offsetLeft+'px';
+					$('KugelContainer').style.left=$('Welt').offsetLeft+'px';
+					$('LogoContainer').style.left=$('Welt').offsetLeft+($('Welt').offsetWidth/2)-($('LogoContainer').offsetWidth/2)+'px';
+					WeltInDerMitte=true;
+				}
+				//Die Fenster bekommen hier ihre Hoehe entsprechend der Anzahl der Fenster-Menge auf ihrer Seite.
+				for(all in AlleFenster){
+					if($(AlleFenster[all]).style.display=='block'){
+						if(eval(AlleFenster[all]).PosiRand=='rechts'){
+							$(AlleFenster[all]).style.height=100/RechtsFensterMenge-.8+'%';
+							$(AlleFenster[all]).style.top=RechtsFensterVerschiebung+.7+'%';
+							RechtsFensterVerschiebung+=100/RechtsFensterMenge;
+						}else
+						if(eval(AlleFenster[all]).PosiRand=='links'){
+							$(AlleFenster[all]).style.height=100/LinksFensterMenge-.8+'%';
+							$(AlleFenster[all]).style.top=LinksFensterVerschiebung+.7+'%';
+							LinksFensterVerschiebung+=100/LinksFensterMenge;
+						}
+						FensterSkalierer(AlleFenster[all]);
+					}
+				}
+			}
+
+			FensterSkalierer=function(fenster){
+				MomentaneFensterGroesse=window.innerHeight;
+				MomentaneFensterBreite=window.innerWidth;
+				if(fenster=='CharakterBoxContainer'){
+					fensterHeight=$(fenster).offsetHeight;
+					fensterWidth=$(fenster).offsetWidth;
+					wer=$('KoerperAnzeigeContainer');
+					if(fensterWidth>(MomentaneFensterBreite-$('Welt').offsetWidth)/2){
+						if(fensterHeight>=MomentaneFensterGroesse/1.1){
+							wer.style.width=60+'%';
+							wer.style.height=50+'%';
+						}else
+						if(fensterHeight<=MomentaneFensterGroesse/1.4&&fensterHeight>=MomentaneFensterGroesse/2.2){
+							wer.style.width=50+'%';
+							wer.style.height=70+'%';
+						}else
+						if(fensterHeight<=MomentaneFensterGroesse/2.6&&fensterHeight>=MomentaneFensterGroesse/3.4){
+							wer.style.width=45+'%';
+							wer.style.height=85+'%';
+						}else
+						if(fensterHeight<=MomentaneFensterGroesse/3.2&&fensterHeight>=MomentaneFensterGroesse/4.3){
+							wer.style.width=30+'%';
+							wer.style.height=90+'%';
+						}else
+						if(fensterHeight<=MomentaneFensterGroesse/4.8&&fensterHeight>=MomentaneFensterGroesse/6.3){
+							wer.style.width=25+'%';
+							wer.style.height=90+'%';
+						}
+					}else if(fensterWidth<(MomentaneFensterBreite-$('Welt').offsetWidth)/2){
+						if(fensterHeight>=MomentaneFensterGroesse/1.1){
+							wer.style.width=85+'%';
+							wer.style.height=35+'%';
+						}else
+						if(fensterHeight<=MomentaneFensterGroesse/1.4&&fensterHeight>=MomentaneFensterGroesse/2.2){
+							wer.style.width=70+'%';
+							wer.style.height=50+'%';
+						}else
+						if(fensterHeight<=MomentaneFensterGroesse/2.6&&fensterHeight>=MomentaneFensterGroesse/3.4){
+							wer.style.width=50+'%';
+							wer.style.height=50+'%';
+						}else
+						if(fensterHeight<=MomentaneFensterGroesse/3.2&&fensterHeight>=MomentaneFensterGroesse/4.3){
+							wer.style.width=50+'%';
+							wer.style.height=80+'%';
+						}else
+						if(fensterHeight<=MomentaneFensterGroesse/4.8&&fensterHeight>=MomentaneFensterGroesse/6.3){
+							wer.style.width=50+'%';
+							wer.style.height=90+'%';
+						}
+					}
+					CharakterBoxContainerSkaliert=true;
+				}else
+				if(fenster=='CraftingBoxContainer'){
+					KochtopfID=$('Kochtopf');
+					KochtopfRezeptKastenID=$('KochtopfRezeptKasten');
+					KochtopfCraftingButtonID=$('KochtopfCraftingButton');
+					KochtopfRezeptAusfuehrenID=$('KochtopfRezeptAusfuehren');
+					KochtopfRezeptAussuchenID=$('KochtopfRezeptAussuchen');
+					KochtopfRezeptAbbrechenID=$('KochtopfRezeptAbbrechen');
+					KochtopfRezeptAnzeigenID=$('KochtopfRezeptAnzeigen');
+					SachenBastelnID=$('SachenBasteln');
+					SachenBastelnRezeptKastenID=$('SachenBastelnRezeptKasten');
+					SachenBastelnCraftingButtonID=$('SachenBastelnCraftingButton');
+					SachenBastelnRezeptAusfuehrenID=$('SachenBastelnRezeptAusfuehren');
+					SachenBastelnRezeptAussuchenID=$('SachenBastelnRezeptAussuchen');
+					SachenBastelnRezeptAbbrechenID=$('SachenBastelnRezeptAbbrechen');
+					SachenBastelnRezeptAnzeigenID=$('SachenBastelnRezeptAnzeigen');
+					if($(fenster).offsetWidth>(MomentaneFensterBreite-$('Welt').offsetWidth)/2){
+						if($(fenster).offsetHeight>=MomentaneFensterGroesse/1.1){
+							KochtopfID.style.left=20+'%';
+							KochtopfID.style.top=5+'%';
+							KochtopfID.style.width=60+'%';
+							KochtopfID.style.height=40+'%';
+							KochtopfRezeptKastenID.style.width=50+'%';
+							KochtopfRezeptKastenID.style.height=40+'%';
+							KochtopfRezeptKastenID.style.left=5+'%';
+							KochtopfRezeptKastenID.style.top=50+'%';
+							KochtopfCraftingButtonID.style.width=20+'%';
+							KochtopfCraftingButtonID.style.height=40+'%';
+							KochtopfCraftingButtonID.style.left=70+'%';
+							KochtopfCraftingButtonID.style.top=50+'%';
+
+							KochtopfRezeptAusfuehrenID.style.width=80+'%';
+							KochtopfRezeptAusfuehrenID.style.height=20+'%';
+							KochtopfRezeptAusfuehrenID.style.left=5+'%';
+							KochtopfRezeptAusfuehrenID.style.top=5+'%';
+
+							KochtopfRezeptAussuchenID.style.width=80+'%';
+							KochtopfRezeptAussuchenID.style.height=20+'%';
+							KochtopfRezeptAussuchenID.style.left=5+'%';
+							KochtopfRezeptAussuchenID.style.top=30+'%';
+
+							KochtopfRezeptAbbrechenID.style.width=80+'%';
+							KochtopfRezeptAbbrechenID.style.height=20+'%';
+							KochtopfRezeptAbbrechenID.style.left=5+'%';
+							KochtopfRezeptAbbrechenID.style.top=55+'%';
+
+							KochtopfRezeptAnzeigenID.style.width=80+'%';
+							KochtopfRezeptAnzeigenID.style.height=20+'%';
+							KochtopfRezeptAnzeigenID.style.left=5+'%';
+							KochtopfRezeptAnzeigenID.style.top=80+'%';
+
+							SachenBastelnID.style.left=20+'%';
+							SachenBastelnID.style.top=5+'%';
+							SachenBastelnID.style.width=60+'%';
+							SachenBastelnID.style.height=40+'%';
+							SachenBastelnRezeptKastenID.style.width=50+'%';
+							SachenBastelnRezeptKastenID.style.height=40+'%';
+							SachenBastelnRezeptKastenID.style.left=5+'%';
+							SachenBastelnRezeptKastenID.style.top=50+'%';
+							SachenBastelnCraftingButtonID.style.width=20+'%';
+							SachenBastelnCraftingButtonID.style.height=40+'%';
+							SachenBastelnCraftingButtonID.style.left=70+'%';
+							SachenBastelnCraftingButtonID.style.top=50+'%';
+
+							SachenBastelnRezeptAusfuehrenID.style.width=80+'%';
+							SachenBastelnRezeptAusfuehrenID.style.height=20+'%';
+							SachenBastelnRezeptAusfuehrenID.style.left=5+'%';
+							SachenBastelnRezeptAusfuehrenID.style.top=5+'%';
+
+							SachenBastelnRezeptAussuchenID.style.width=80+'%';
+							SachenBastelnRezeptAussuchenID.style.height=20+'%';
+							SachenBastelnRezeptAussuchenID.style.left=5+'%';
+							SachenBastelnRezeptAussuchenID.style.top=30+'%';
+
+							SachenBastelnRezeptAbbrechenID.style.width=80+'%';
+							SachenBastelnRezeptAbbrechenID.style.height=20+'%';
+							SachenBastelnRezeptAbbrechenID.style.left=5+'%';
+							SachenBastelnRezeptAbbrechenID.style.top=55+'%';
+
+							SachenBastelnRezeptAnzeigenID.style.width=80+'%';
+							SachenBastelnRezeptAnzeigenID.style.height=20+'%';
+							SachenBastelnRezeptAnzeigenID.style.left=5+'%';
+							SachenBastelnRezeptAnzeigenID.style.top=80+'%';
+						}else
+						if($(fenster).offsetHeight<=MomentaneFensterGroesse/1.4&&$(fenster).offsetHeight>=MomentaneFensterGroesse/2.2){
+							KochtopfID.style.left=30+'%';
+							KochtopfID.style.top=5+'%';
+							KochtopfID.style.width=40+'%';
+							KochtopfID.style.height=50+'%';
+							KochtopfRezeptKastenID.style.width=50+'%';
+							KochtopfRezeptKastenID.style.height=40+'%';
+							KochtopfRezeptKastenID.style.left=5+'%';
+							KochtopfRezeptKastenID.style.top=50+'%';
+							KochtopfCraftingButtonID.style.width=20+'%';
+							KochtopfCraftingButtonID.style.height=40+'%';
+							KochtopfCraftingButtonID.style.left=70+'%';
+							KochtopfCraftingButtonID.style.top=50+'%';
+
+							KochtopfRezeptAusfuehrenID.style.width=80+'%';
+							KochtopfRezeptAusfuehrenID.style.height=20+'%';
+							KochtopfRezeptAusfuehrenID.style.left=5+'%';
+							KochtopfRezeptAusfuehrenID.style.top=5+'%';
+
+							KochtopfRezeptAussuchenID.style.width=80+'%';
+							KochtopfRezeptAussuchenID.style.height=20+'%';
+							KochtopfRezeptAussuchenID.style.left=5+'%';
+							KochtopfRezeptAussuchenID.style.top=30+'%';
+
+							KochtopfRezeptAbbrechenID.style.width=80+'%';
+							KochtopfRezeptAbbrechenID.style.height=20+'%';
+							KochtopfRezeptAbbrechenID.style.left=5+'%';
+							KochtopfRezeptAbbrechenID.style.top=55+'%';
+
+							KochtopfRezeptAnzeigenID.style.width=80+'%';
+							KochtopfRezeptAnzeigenID.style.height=20+'%';
+							KochtopfRezeptAnzeigenID.style.left=5+'%';
+							KochtopfRezeptAnzeigenID.style.top=80+'%';
+
+							SachenBastelnID.style.left=30+'%';
+							SachenBastelnID.style.top=5+'%';
+							SachenBastelnID.style.width=40+'%';
+							SachenBastelnID.style.height=50+'%';
+							SachenBastelnRezeptKastenID.style.width=50+'%';
+							SachenBastelnRezeptKastenID.style.height=40+'%';
+							SachenBastelnRezeptKastenID.style.left=5+'%';
+							SachenBastelnRezeptKastenID.style.top=50+'%';
+							SachenBastelnCraftingButtonID.style.width=20+'%';
+							SachenBastelnCraftingButtonID.style.height=40+'%';
+							SachenBastelnCraftingButtonID.style.left=70+'%';
+							SachenBastelnCraftingButtonID.style.top=50+'%';
+
+							SachenBastelnRezeptAusfuehrenID.style.width=80+'%';
+							SachenBastelnRezeptAusfuehrenID.style.height=20+'%';
+							SachenBastelnRezeptAusfuehrenID.style.left=5+'%';
+							SachenBastelnRezeptAusfuehrenID.style.top=5+'%';
+
+							SachenBastelnRezeptAussuchenID.style.width=80+'%';
+							SachenBastelnRezeptAussuchenID.style.height=20+'%';
+							SachenBastelnRezeptAussuchenID.style.left=5+'%';
+							SachenBastelnRezeptAussuchenID.style.top=30+'%';
+
+							SachenBastelnRezeptAbbrechenID.style.width=80+'%';
+							SachenBastelnRezeptAbbrechenID.style.height=20+'%';
+							SachenBastelnRezeptAbbrechenID.style.left=5+'%';
+							SachenBastelnRezeptAbbrechenID.style.top=55+'%';
+
+							SachenBastelnRezeptAnzeigenID.style.width=80+'%';
+							SachenBastelnRezeptAnzeigenID.style.height=20+'%';
+							SachenBastelnRezeptAnzeigenID.style.left=5+'%';
+							SachenBastelnRezeptAnzeigenID.style.top=80+'%';
+						}else
+						if($(fenster).offsetHeight<=MomentaneFensterGroesse/2.6&&$(fenster).offsetHeight>=MomentaneFensterGroesse/3.4){
+							KochtopfID.style.width=30+'%';
+							KochtopfID.style.height=60+'%';
+							KochtopfID.style.left=5+'%';
+							KochtopfID.style.top=20+'%';
+							KochtopfRezeptKastenID.style.width=30+'%';
+							KochtopfRezeptKastenID.style.height=85+'%';
+							KochtopfRezeptKastenID.style.left=35+'%';
+							KochtopfRezeptKastenID.style.top=5+'%';
+							KochtopfCraftingButtonID.style.width=20+'%';
+							KochtopfCraftingButtonID.style.height=85+'%';
+							KochtopfCraftingButtonID.style.left=70+'%';
+							KochtopfCraftingButtonID.style.top=5+'%';
+
+							KochtopfRezeptAusfuehrenID.style.width=80+'%';
+							KochtopfRezeptAusfuehrenID.style.height=20+'%';
+							KochtopfRezeptAusfuehrenID.style.left=5+'%';
+							KochtopfRezeptAusfuehrenID.style.top=5+'%';
+
+							KochtopfRezeptAussuchenID.style.width=80+'%';
+							KochtopfRezeptAussuchenID.style.height=20+'%';
+							KochtopfRezeptAussuchenID.style.left=5+'%';
+							KochtopfRezeptAussuchenID.style.top=30+'%';
+
+							KochtopfRezeptAbbrechenID.style.width=80+'%';
+							KochtopfRezeptAbbrechenID.style.height=20+'%';
+							KochtopfRezeptAbbrechenID.style.left=5+'%';
+							KochtopfRezeptAbbrechenID.style.top=55+'%';
+
+							KochtopfRezeptAnzeigenID.style.width=80+'%';
+							KochtopfRezeptAnzeigenID.style.height=20+'%';
+							KochtopfRezeptAnzeigenID.style.left=5+'%';
+							KochtopfRezeptAnzeigenID.style.top=80+'%';
+
+							SachenBastelnID.style.width=30+'%';
+							SachenBastelnID.style.height=60+'%';
+							SachenBastelnID.style.left=5+'%';
+							SachenBastelnID.style.top=20+'%';
+							SachenBastelnRezeptKastenID.style.width=30+'%';
+							SachenBastelnRezeptKastenID.style.height=85+'%';
+							SachenBastelnRezeptKastenID.style.left=35+'%';
+							SachenBastelnRezeptKastenID.style.top=5+'%';
+							SachenBastelnCraftingButtonID.style.width=20+'%';
+							SachenBastelnCraftingButtonID.style.height=85+'%';
+							SachenBastelnCraftingButtonID.style.left=70+'%';
+							SachenBastelnCraftingButtonID.style.top=5+'%';
+
+							SachenBastelnRezeptAusfuehrenID.style.width=80+'%';
+							SachenBastelnRezeptAusfuehrenID.style.height=20+'%';
+							SachenBastelnRezeptAusfuehrenID.style.left=5+'%';
+							SachenBastelnRezeptAusfuehrenID.style.top=5+'%';
+
+							SachenBastelnRezeptAussuchenID.style.width=80+'%';
+							SachenBastelnRezeptAussuchenID.style.height=20+'%';
+							SachenBastelnRezeptAussuchenID.style.left=5+'%';
+							SachenBastelnRezeptAussuchenID.style.top=30+'%';
+
+							SachenBastelnRezeptAbbrechenID.style.width=80+'%';
+							SachenBastelnRezeptAbbrechenID.style.height=20+'%';
+							SachenBastelnRezeptAbbrechenID.style.left=5+'%';
+							SachenBastelnRezeptAbbrechenID.style.top=55+'%';
+
+							SachenBastelnRezeptAnzeigenID.style.width=80+'%';
+							SachenBastelnRezeptAnzeigenID.style.height=20+'%';
+							SachenBastelnRezeptAnzeigenID.style.left=5+'%';
+							SachenBastelnRezeptAnzeigenID.style.top=80+'%';
+						}else
+						if($(fenster).offsetHeight<=MomentaneFensterGroesse/3.2&&$(fenster).offsetHeight>=MomentaneFensterGroesse/4.3){
+							KochtopfID.style.width=25+'%';
+							KochtopfID.style.height=70+'%';
+							KochtopfID.style.left=5+'%';
+							KochtopfID.style.top=15+'%';
+							KochtopfRezeptKastenID.style.width=30+'%';
+							KochtopfRezeptKastenID.style.height=85+'%';
+							KochtopfRezeptKastenID.style.left=35+'%';
+							KochtopfRezeptKastenID.style.top=5+'%';
+							KochtopfCraftingButtonID.style.width=20+'%';
+							KochtopfCraftingButtonID.style.height=85+'%';
+							KochtopfCraftingButtonID.style.left=70+'%';
+							KochtopfCraftingButtonID.style.top=5+'%';
+
+							KochtopfRezeptAusfuehrenID.style.width=80+'%';
+							KochtopfRezeptAusfuehrenID.style.height=20+'%';
+							KochtopfRezeptAusfuehrenID.style.left=5+'%';
+							KochtopfRezeptAusfuehrenID.style.top=5+'%';
+
+							KochtopfRezeptAussuchenID.style.width=80+'%';
+							KochtopfRezeptAussuchenID.style.height=20+'%';
+							KochtopfRezeptAussuchenID.style.left=5+'%';
+							KochtopfRezeptAussuchenID.style.top=30+'%';
+
+							KochtopfRezeptAbbrechenID.style.width=80+'%';
+							KochtopfRezeptAbbrechenID.style.height=20+'%';
+							KochtopfRezeptAbbrechenID.style.left=5+'%';
+							KochtopfRezeptAbbrechenID.style.top=55+'%';
+
+							KochtopfRezeptAnzeigenID.style.width=80+'%';
+							KochtopfRezeptAnzeigenID.style.height=20+'%';
+							KochtopfRezeptAnzeigenID.style.left=5+'%';
+							KochtopfRezeptAnzeigenID.style.top=80+'%';
+
+							SachenBastelnID.style.width=25+'%';
+							SachenBastelnID.style.height=70+'%';
+							SachenBastelnID.style.left=5+'%';
+							SachenBastelnID.style.top=15+'%';
+							SachenBastelnRezeptKastenID.style.width=30+'%';
+							SachenBastelnRezeptKastenID.style.height=85+'%';
+							SachenBastelnRezeptKastenID.style.left=35+'%';
+							SachenBastelnRezeptKastenID.style.top=5+'%';
+							SachenBastelnCraftingButtonID.style.width=20+'%';
+							SachenBastelnCraftingButtonID.style.height=85+'%';
+							SachenBastelnCraftingButtonID.style.left=70+'%';
+							SachenBastelnCraftingButtonID.style.top=5+'%';
+
+							SachenBastelnRezeptAusfuehrenID.style.width=80+'%';
+							SachenBastelnRezeptAusfuehrenID.style.height=20+'%';
+							SachenBastelnRezeptAusfuehrenID.style.left=5+'%';
+							SachenBastelnRezeptAusfuehrenID.style.top=5+'%';
+
+							SachenBastelnRezeptAussuchenID.style.width=80+'%';
+							SachenBastelnRezeptAussuchenID.style.height=20+'%';
+							SachenBastelnRezeptAussuchenID.style.left=5+'%';
+							SachenBastelnRezeptAussuchenID.style.top=30+'%';
+
+							SachenBastelnRezeptAbbrechenID.style.width=80+'%';
+							SachenBastelnRezeptAbbrechenID.style.height=20+'%';
+							SachenBastelnRezeptAbbrechenID.style.left=5+'%';
+							SachenBastelnRezeptAbbrechenID.style.top=55+'%';
+
+							SachenBastelnRezeptAnzeigenID.style.width=80+'%';
+							SachenBastelnRezeptAnzeigenID.style.height=20+'%';
+							SachenBastelnRezeptAnzeigenID.style.left=5+'%';
+							SachenBastelnRezeptAnzeigenID.style.top=80+'%';
+						}else
+						if($(fenster).offsetHeight<=MomentaneFensterGroesse/4.8&&$(fenster).offsetHeight>=MomentaneFensterGroesse/6.3){
+							KochtopfID.style.width=25+'%';
+							KochtopfID.style.height=85+'%';
+							KochtopfID.style.left=5+'%';
+							KochtopfID.style.top=5+'%';
+							KochtopfRezeptKastenID.style.width=30+'%';
+							KochtopfRezeptKastenID.style.height=85+'%';
+							KochtopfRezeptKastenID.style.left=35+'%';
+							KochtopfRezeptKastenID.style.top=5+'%';
+
+							KochtopfCraftingButtonID.style.width=30+'%';
+							KochtopfCraftingButtonID.style.height=40+'%';
+							KochtopfCraftingButtonID.style.left=65+'%';
+							KochtopfCraftingButtonID.style.top=30+'%';
+
+							KochtopfRezeptAusfuehrenID.style.width=20+'%';
+							KochtopfRezeptAusfuehrenID.style.height=85+'%';
+							KochtopfRezeptAusfuehrenID.style.left=5+'%';
+							KochtopfRezeptAusfuehrenID.style.top=5+'%';
+
+							KochtopfRezeptAussuchenID.style.width=20+'%';
+							KochtopfRezeptAussuchenID.style.height=85+'%';
+							KochtopfRezeptAussuchenID.style.left=30+'%';
+							KochtopfRezeptAussuchenID.style.top=5+'%';
+
+							KochtopfRezeptAbbrechenID.style.width=20+'%';
+							KochtopfRezeptAbbrechenID.style.height=85+'%';
+							KochtopfRezeptAbbrechenID.style.left=55+'%';
+							KochtopfRezeptAbbrechenID.style.top=5+'%';
+
+							KochtopfRezeptAnzeigenID.style.width=20+'%';
+							KochtopfRezeptAnzeigenID.style.height=85+'%';
+							KochtopfRezeptAnzeigenID.style.left=80+'%';
+							KochtopfRezeptAnzeigenID.style.top=5+'%';
+							SachenBastelnID.style.width=25+'%';
+							SachenBastelnID.style.height=85+'%';
+							SachenBastelnID.style.left=5+'%';
+							SachenBastelnID.style.top=5+'%';
+							SachenBastelnRezeptKastenID.style.width=30+'%';
+							SachenBastelnRezeptKastenID.style.height=85+'%';
+							SachenBastelnRezeptKastenID.style.left=35+'%';
+							SachenBastelnRezeptKastenID.style.top=5+'%';
+							SachenBastelnCraftingButtonID.style.width=30+'%';
+							SachenBastelnCraftingButtonID.style.height=40+'%';
+							SachenBastelnCraftingButtonID.style.left=65+'%';
+							SachenBastelnCraftingButtonID.style.top=30+'%';
+
+							SachenBastelnRezeptAusfuehrenID.style.width=20+'%';
+							SachenBastelnRezeptAusfuehrenID.style.height=85+'%';
+							SachenBastelnRezeptAusfuehrenID.style.left=5+'%';
+							SachenBastelnRezeptAusfuehrenID.style.top=5+'%';
+
+							SachenBastelnRezeptAussuchenID.style.width=20+'%';
+							SachenBastelnRezeptAussuchenID.style.height=85+'%';
+							SachenBastelnRezeptAussuchenID.style.left=30+'%';
+							SachenBastelnRezeptAussuchenID.style.top=5+'%';
+
+							SachenBastelnRezeptAbbrechenID.style.width=20+'%';
+							SachenBastelnRezeptAbbrechenID.style.height=85+'%';
+							SachenBastelnRezeptAbbrechenID.style.left=55+'%';
+							SachenBastelnRezeptAbbrechenID.style.top=5+'%';
+
+							SachenBastelnRezeptAnzeigenID.style.width=20+'%';
+							SachenBastelnRezeptAnzeigenID.style.height=85+'%';
+							SachenBastelnRezeptAnzeigenID.style.left=80+'%';
+							SachenBastelnRezeptAnzeigenID.style.top=5+'%';
+						}
+					}else if($(fenster).offsetWidth<(MomentaneFensterBreite-$('Welt').offsetWidth)/2){
+						if($(fenster).offsetHeight>=MomentaneFensterGroesse/1.1){
+							KochtopfID.style.left=5+'%';
+							KochtopfID.style.top=5+'%';
+							KochtopfID.style.width=90+'%';
+							KochtopfID.style.height=30+'%';
+							KochtopfRezeptKastenID.style.width=90+'%';
+							KochtopfRezeptKastenID.style.height=40+'%';
+							KochtopfRezeptKastenID.style.left=5+'%';
+							KochtopfRezeptKastenID.style.top=35+'%';
+
+							KochtopfCraftingButtonID.style.width=50+'%';
+							KochtopfCraftingButtonID.style.height=20+'%';
+							KochtopfCraftingButtonID.style.left=25+'%';
+							KochtopfCraftingButtonID.style.top=75+'%';
+
+							KochtopfRezeptAusfuehrenID.style.width=80+'%';
+							KochtopfRezeptAusfuehrenID.style.height=20+'%';
+							KochtopfRezeptAusfuehrenID.style.left=5+'%';
+							KochtopfRezeptAusfuehrenID.style.top=5+'%';
+
+							KochtopfRezeptAussuchenID.style.width=80+'%';
+							KochtopfRezeptAussuchenID.style.height=20+'%';
+							KochtopfRezeptAussuchenID.style.left=5+'%';
+							KochtopfRezeptAussuchenID.style.top=30+'%';
+
+							KochtopfRezeptAbbrechenID.style.width=80+'%';
+							KochtopfRezeptAbbrechenID.style.height=20+'%';
+							KochtopfRezeptAbbrechenID.style.left=5+'%';
+							KochtopfRezeptAbbrechenID.style.top=55+'%';
+
+							KochtopfRezeptAnzeigenID.style.width=80+'%';
+							KochtopfRezeptAnzeigenID.style.height=20+'%';
+							KochtopfRezeptAnzeigenID.style.left=5+'%';
+							KochtopfRezeptAnzeigenID.style.top=80+'%';
+
+							SachenBastelnID.style.left=5+'%';
+							SachenBastelnID.style.top=5+'%';
+							SachenBastelnID.style.width=90+'%';
+							SachenBastelnID.style.height=30+'%';
+							SachenBastelnRezeptKastenID.style.width=90+'%';
+							SachenBastelnRezeptKastenID.style.height=40+'%';
+							SachenBastelnRezeptKastenID.style.left=5+'%';
+							SachenBastelnRezeptKastenID.style.top=35+'%';
+							SachenBastelnCraftingButtonID.style.width=90+'%';
+							SachenBastelnCraftingButtonID.style.height=20+'%';
+							SachenBastelnCraftingButtonID.style.left=5+'%';
+							SachenBastelnCraftingButtonID.style.top=75+'%';
+
+							SachenBastelnRezeptAusfuehrenID.style.width=80+'%';
+							SachenBastelnRezeptAusfuehrenID.style.height=20+'%';
+							SachenBastelnRezeptAusfuehrenID.style.left=5+'%';
+							SachenBastelnRezeptAusfuehrenID.style.top=5+'%';
+
+							SachenBastelnRezeptAussuchenID.style.width=80+'%';
+							SachenBastelnRezeptAussuchenID.style.height=20+'%';
+							SachenBastelnRezeptAussuchenID.style.left=5+'%';
+							SachenBastelnRezeptAussuchenID.style.top=30+'%';
+
+							SachenBastelnRezeptAbbrechenID.style.width=80+'%';
+							SachenBastelnRezeptAbbrechenID.style.height=20+'%';
+							SachenBastelnRezeptAbbrechenID.style.left=5+'%';
+							SachenBastelnRezeptAbbrechenID.style.top=55+'%';
+
+							SachenBastelnRezeptAnzeigenID.style.width=80+'%';
+							SachenBastelnRezeptAnzeigenID.style.height=20+'%';
+							SachenBastelnRezeptAnzeigenID.style.left=5+'%';
+							SachenBastelnRezeptAnzeigenID.style.top=80+'%';
+						}else
+						if($(fenster).offsetHeight<=MomentaneFensterGroesse/1.4&&$(fenster).offsetHeight>=MomentaneFensterGroesse/2.2){
+							KochtopfID.style.left=20+'%';
+							KochtopfID.style.top=5+'%';
+							KochtopfID.style.width=60+'%';
+							KochtopfID.style.height=40+'%';
+							KochtopfRezeptKastenID.style.width=50+'%';
+							KochtopfRezeptKastenID.style.height=40+'%';
+							KochtopfRezeptKastenID.style.left=5+'%';
+							KochtopfRezeptKastenID.style.top=50+'%';
+							KochtopfCraftingButtonID.style.width=20+'%';
+							KochtopfCraftingButtonID.style.height=40+'%';
+							KochtopfCraftingButtonID.style.left=70+'%';
+							KochtopfCraftingButtonID.style.top=50+'%';
+
+							KochtopfRezeptAusfuehrenID.style.width=80+'%';
+							KochtopfRezeptAusfuehrenID.style.height=20+'%';
+							KochtopfRezeptAusfuehrenID.style.left=5+'%';
+							KochtopfRezeptAusfuehrenID.style.top=5+'%';
+
+							KochtopfRezeptAussuchenID.style.width=80+'%';
+							KochtopfRezeptAussuchenID.style.height=20+'%';
+							KochtopfRezeptAussuchenID.style.left=5+'%';
+							KochtopfRezeptAussuchenID.style.top=30+'%';
+
+							KochtopfRezeptAbbrechenID.style.width=80+'%';
+							KochtopfRezeptAbbrechenID.style.height=20+'%';
+							KochtopfRezeptAbbrechenID.style.left=5+'%';
+							KochtopfRezeptAbbrechenID.style.top=55+'%';
+
+							KochtopfRezeptAnzeigenID.style.width=80+'%';
+							KochtopfRezeptAnzeigenID.style.height=20+'%';
+							KochtopfRezeptAnzeigenID.style.left=5+'%';
+							KochtopfRezeptAnzeigenID.style.top=80+'%';
+
+							SachenBastelnID.style.left=20+'%';
+							SachenBastelnID.style.top=5+'%';
+							SachenBastelnID.style.width=60+'%';
+							SachenBastelnID.style.height=40+'%';
+							SachenBastelnRezeptKastenID.style.width=50+'%';
+							SachenBastelnRezeptKastenID.style.height=40+'%';
+							SachenBastelnRezeptKastenID.style.left=5+'%';
+							SachenBastelnRezeptKastenID.style.top=50+'%';
+							SachenBastelnCraftingButtonID.style.width=20+'%';
+							SachenBastelnCraftingButtonID.style.height=40+'%';
+							SachenBastelnCraftingButtonID.style.left=70+'%';
+							SachenBastelnCraftingButtonID.style.top=50+'%';
+
+							SachenBastelnRezeptAusfuehrenID.style.width=80+'%';
+							SachenBastelnRezeptAusfuehrenID.style.height=20+'%';
+							SachenBastelnRezeptAusfuehrenID.style.left=5+'%';
+							SachenBastelnRezeptAusfuehrenID.style.top=5+'%';
+
+							SachenBastelnRezeptAussuchenID.style.width=80+'%';
+							SachenBastelnRezeptAussuchenID.style.height=20+'%';
+							SachenBastelnRezeptAussuchenID.style.left=5+'%';
+							SachenBastelnRezeptAussuchenID.style.top=30+'%';
+
+							SachenBastelnRezeptAbbrechenID.style.width=80+'%';
+							SachenBastelnRezeptAbbrechenID.style.height=20+'%';
+							SachenBastelnRezeptAbbrechenID.style.left=5+'%';
+							SachenBastelnRezeptAbbrechenID.style.top=55+'%';
+
+							SachenBastelnRezeptAnzeigenID.style.width=80+'%';
+							SachenBastelnRezeptAnzeigenID.style.height=20+'%';
+							SachenBastelnRezeptAnzeigenID.style.left=5+'%';
+							SachenBastelnRezeptAnzeigenID.style.top=80+'%';
+						}else
+						if($(fenster).offsetHeight<=MomentaneFensterGroesse/2.6&&$(fenster).offsetHeight>=MomentaneFensterGroesse/3.4){
+							KochtopfID.style.width=45+'%';
+							KochtopfID.style.height=45+'%';
+							KochtopfID.style.left=5+'%';
+							KochtopfID.style.top=5+'%';
+							KochtopfRezeptKastenID.style.width=45+'%';
+							KochtopfRezeptKastenID.style.height=40+'%';
+							KochtopfRezeptKastenID.style.left=5+'%';
+							KochtopfRezeptKastenID.style.top=50+'%';
+							KochtopfCraftingButtonID.style.width=20+'%';
+							KochtopfCraftingButtonID.style.height=70+'%';
+							KochtopfCraftingButtonID.style.left=70+'%';
+							KochtopfCraftingButtonID.style.top=15+'%';
+
+							KochtopfRezeptAusfuehrenID.style.width=80+'%';
+							KochtopfRezeptAusfuehrenID.style.height=20+'%';
+							KochtopfRezeptAusfuehrenID.style.left=5+'%';
+							KochtopfRezeptAusfuehrenID.style.top=5+'%';
+
+							KochtopfRezeptAussuchenID.style.width=80+'%';
+							KochtopfRezeptAussuchenID.style.height=20+'%';
+							KochtopfRezeptAussuchenID.style.left=5+'%';
+							KochtopfRezeptAussuchenID.style.top=30+'%';
+
+							KochtopfRezeptAbbrechenID.style.width=80+'%';
+							KochtopfRezeptAbbrechenID.style.height=20+'%';
+							KochtopfRezeptAbbrechenID.style.left=5+'%';
+							KochtopfRezeptAbbrechenID.style.top=55+'%';
+
+							KochtopfRezeptAnzeigenID.style.width=80+'%';
+							KochtopfRezeptAnzeigenID.style.height=20+'%';
+							KochtopfRezeptAnzeigenID.style.left=5+'%';
+							KochtopfRezeptAnzeigenID.style.top=80+'%';
+
+							SachenBastelnID.style.width=45+'%';
+							SachenBastelnID.style.height=45+'%';
+							SachenBastelnID.style.left=5+'%';
+							SachenBastelnID.style.top=5+'%';
+							SachenBastelnRezeptKastenID.style.width=45+'%';
+							SachenBastelnRezeptKastenID.style.height=40+'%';
+							SachenBastelnRezeptKastenID.style.left=5+'%';
+							SachenBastelnRezeptKastenID.style.top=50+'%';
+							SachenBastelnCraftingButtonID.style.width=20+'%';
+							SachenBastelnCraftingButtonID.style.height=85+'%';
+							SachenBastelnCraftingButtonID.style.left=70+'%';
+							SachenBastelnCraftingButtonID.style.top=5+'%';
+
+							SachenBastelnRezeptAusfuehrenID.style.width=80+'%';
+							SachenBastelnRezeptAusfuehrenID.style.height=20+'%';
+							SachenBastelnRezeptAusfuehrenID.style.left=5+'%';
+							SachenBastelnRezeptAusfuehrenID.style.top=5+'%';
+
+							SachenBastelnRezeptAussuchenID.style.width=80+'%';
+							SachenBastelnRezeptAussuchenID.style.height=20+'%';
+							SachenBastelnRezeptAussuchenID.style.left=5+'%';
+							SachenBastelnRezeptAussuchenID.style.top=30+'%';
+
+							SachenBastelnRezeptAbbrechenID.style.width=80+'%';
+							SachenBastelnRezeptAbbrechenID.style.height=20+'%';
+							SachenBastelnRezeptAbbrechenID.style.left=5+'%';
+							SachenBastelnRezeptAbbrechenID.style.top=55+'%';
+
+							SachenBastelnRezeptAnzeigenID.style.width=80+'%';
+							SachenBastelnRezeptAnzeigenID.style.height=20+'%';
+							SachenBastelnRezeptAnzeigenID.style.left=5+'%';
+							SachenBastelnRezeptAnzeigenID.style.top=80+'%';
+						}else
+						if($(fenster).offsetHeight<=MomentaneFensterGroesse/3.2&&$(fenster).offsetHeight>=MomentaneFensterGroesse/4.3){
+							KochtopfID.style.width=35+'%';
+							KochtopfID.style.height=45+'%';
+							KochtopfID.style.left=10+'%';
+							KochtopfID.style.top=5+'%';
+							KochtopfRezeptKastenID.style.width=45+'%';
+							KochtopfRezeptKastenID.style.height=40+'%';
+							KochtopfRezeptKastenID.style.left=5+'%';
+							KochtopfRezeptKastenID.style.top=50+'%';
+							KochtopfCraftingButtonID.style.width=20+'%';
+							KochtopfCraftingButtonID.style.height=85+'%';
+							KochtopfCraftingButtonID.style.left=70+'%';
+							KochtopfCraftingButtonID.style.top=5+'%';
+
+							KochtopfRezeptAusfuehrenID.style.width=80+'%';
+							KochtopfRezeptAusfuehrenID.style.height=20+'%';
+							KochtopfRezeptAusfuehrenID.style.left=5+'%';
+							KochtopfRezeptAusfuehrenID.style.top=5+'%';
+
+							KochtopfRezeptAussuchenID.style.width=80+'%';
+							KochtopfRezeptAussuchenID.style.height=20+'%';
+							KochtopfRezeptAussuchenID.style.left=5+'%';
+							KochtopfRezeptAussuchenID.style.top=30+'%';
+
+							KochtopfRezeptAbbrechenID.style.width=80+'%';
+							KochtopfRezeptAbbrechenID.style.height=20+'%';
+							KochtopfRezeptAbbrechenID.style.left=5+'%';
+							KochtopfRezeptAbbrechenID.style.top=55+'%';
+
+							KochtopfRezeptAnzeigenID.style.width=80+'%';
+							KochtopfRezeptAnzeigenID.style.height=20+'%';
+							KochtopfRezeptAnzeigenID.style.left=5+'%';
+							KochtopfRezeptAnzeigenID.style.top=80+'%';
+
+							SachenBastelnID.style.width=35+'%';
+							SachenBastelnID.style.height=45+'%';
+							SachenBastelnID.style.left=10+'%';
+							SachenBastelnID.style.top=5+'%';
+							SachenBastelnRezeptKastenID.style.width=45+'%';
+							SachenBastelnRezeptKastenID.style.height=40+'%';
+							SachenBastelnRezeptKastenID.style.left=5+'%';
+							SachenBastelnRezeptKastenID.style.top=50+'%';
+							SachenBastelnCraftingButtonID.style.width=20+'%';
+							SachenBastelnCraftingButtonID.style.height=85+'%';
+							SachenBastelnCraftingButtonID.style.left=70+'%';
+							SachenBastelnCraftingButtonID.style.top=5+'%';
+
+							SachenBastelnRezeptAusfuehrenID.style.width=80+'%';
+							SachenBastelnRezeptAusfuehrenID.style.height=20+'%';
+							SachenBastelnRezeptAusfuehrenID.style.left=5+'%';
+							SachenBastelnRezeptAusfuehrenID.style.top=5+'%';
+
+							SachenBastelnRezeptAussuchenID.style.width=80+'%';
+							SachenBastelnRezeptAussuchenID.style.height=20+'%';
+							SachenBastelnRezeptAussuchenID.style.left=5+'%';
+							SachenBastelnRezeptAussuchenID.style.top=30+'%';
+
+							SachenBastelnRezeptAbbrechenID.style.width=80+'%';
+							SachenBastelnRezeptAbbrechenID.style.height=20+'%';
+							SachenBastelnRezeptAbbrechenID.style.left=5+'%';
+							SachenBastelnRezeptAbbrechenID.style.top=55+'%';
+
+							SachenBastelnRezeptAnzeigenID.style.width=80+'%';
+							SachenBastelnRezeptAnzeigenID.style.height=20+'%';
+							SachenBastelnRezeptAnzeigenID.style.left=5+'%';
+							SachenBastelnRezeptAnzeigenID.style.top=80+'%';
+						}else
+						if($(fenster).offsetHeight<=MomentaneFensterGroesse/4.8&&$(fenster).offsetHeight>=MomentaneFensterGroesse/6.3){
+							KochtopfID.style.width=40+'%';
+							KochtopfID.style.height=70+'%';
+							KochtopfID.style.left=5+'%';
+							KochtopfID.style.top=10+'%';
+							KochtopfRezeptKastenID.style.width=40+'%';
+							KochtopfRezeptKastenID.style.height=60+'%';
+							KochtopfRezeptKastenID.style.left=50+'%';
+							KochtopfRezeptKastenID.style.top=5+'%';
+							KochtopfCraftingButtonID.style.width=50+'%';
+							KochtopfCraftingButtonID.style.height=25+'%';
+							KochtopfCraftingButtonID.style.left=40+'%';
+							KochtopfCraftingButtonID.style.top=70+'%';
+
+							KochtopfRezeptAusfuehrenID.style.width=20+'%';
+							KochtopfRezeptAusfuehrenID.style.height=85+'%';
+							KochtopfRezeptAusfuehrenID.style.left=5+'%';
+							KochtopfRezeptAusfuehrenID.style.top=5+'%';
+
+							KochtopfRezeptAussuchenID.style.width=20+'%';
+							KochtopfRezeptAussuchenID.style.height=85+'%';
+							KochtopfRezeptAussuchenID.style.left=30+'%';
+							KochtopfRezeptAussuchenID.style.top=5+'%';
+
+							KochtopfRezeptAbbrechenID.style.width=20+'%';
+							KochtopfRezeptAbbrechenID.style.height=85+'%';
+							KochtopfRezeptAbbrechenID.style.left=55+'%';
+							KochtopfRezeptAbbrechenID.style.top=5+'%';
+
+							KochtopfRezeptAnzeigenID.style.width=20+'%';
+							KochtopfRezeptAnzeigenID.style.height=85+'%';
+							KochtopfRezeptAnzeigenID.style.left=80+'%';
+							KochtopfRezeptAnzeigenID.style.top=5+'%';
+
+							SachenBastelnID.style.width=40+'%';
+							SachenBastelnID.style.height=70+'%';
+							SachenBastelnID.style.left=5+'%';
+							SachenBastelnID.style.top=10+'%';
+							SachenBastelnRezeptKastenID.style.width=40+'%';
+							SachenBastelnRezeptKastenID.style.height=60+'%';
+							SachenBastelnRezeptKastenID.style.left=50+'%';
+							SachenBastelnRezeptKastenID.style.top=5+'%';
+							SachenBastelnCraftingButtonID.style.width=50+'%';
+							SachenBastelnCraftingButtonID.style.height=25+'%';
+							SachenBastelnCraftingButtonID.style.left=40+'%';
+							SachenBastelnCraftingButtonID.style.top=70+'%';
+
+							SachenBastelnRezeptAusfuehrenID.style.width=20+'%';
+							SachenBastelnRezeptAusfuehrenID.style.height=85+'%';
+							SachenBastelnRezeptAusfuehrenID.style.left=5+'%';
+							SachenBastelnRezeptAusfuehrenID.style.top=5+'%';
+
+							SachenBastelnRezeptAussuchenID.style.width=20+'%';
+							SachenBastelnRezeptAussuchenID.style.height=85+'%';
+							SachenBastelnRezeptAussuchenID.style.left=30+'%';
+							SachenBastelnRezeptAussuchenID.style.top=5+'%';
+
+							SachenBastelnRezeptAbbrechenID.style.width=20+'%';
+							SachenBastelnRezeptAbbrechenID.style.height=85+'%';
+							SachenBastelnRezeptAbbrechenID.style.left=55+'%';
+							SachenBastelnRezeptAbbrechenID.style.top=5+'%';
+
+							SachenBastelnRezeptAnzeigenID.style.width=20+'%';
+							SachenBastelnRezeptAnzeigenID.style.height=85+'%';
+							SachenBastelnRezeptAnzeigenID.style.left=80+'%';
+							SachenBastelnRezeptAnzeigenID.style.top=5+'%';
+						}
+					}
+					CraftingBoxContainerSkaliert=true;
+				}
+			}
+
+			FensterPosiChange=function(fenster){
+				wer=$(fenster);
+				if(($('Welt').offsetLeft>=20&&(wer.offsetLeft-($('Welt').offsetWidth/2))<$('Welt').offsetLeft)||$('Welt').offsetLeft>=(window.innerWidth-$('Welt').offsetWidth)-(ZwischenRand*2)){//
+					wer.style.width=window.innerWidth-($('Welt').offsetLeft+$('Welt').offsetWidth)-(ZwischenRand*2);
+					wer.style.left=$('Welt').offsetLeft+$('Welt').offsetWidth+ZwischenRand;
+				}else
+				if($('Welt').offsetLeft<=40||wer.offsetLeft+($('Welt').offsetLeft/2)>$('Welt').offsetLeft+$('Welt').offsetWidth-($('Welt').offsetWidth/2)){
+					wer.style.width=$('Welt').offsetLeft-(ZwischenRand*2);
+					wer.style.left=ZwischenRand;
+				}
+				GroesseAendern(wer,fenster);
+			}
+
+			MachDasWiederZu=function(wer){
+				$(wer).style.display='none';
+			}
+
+			theKugelContainerHTMLVary='';
+			KugelContainerInit=function(){
+				for(all in KugelnArray){
+					theKugelContainerHTMLVary+='<div id="Kugel'+KugelnArray[all]+'" style="top:'+KugelnOnTopArray[all]+'px;left:'+KugelnOnLeftArray[all]+'px;width:56px;height:56px;" class="A ZI22"><img class="A W100_0 H100_0" id="Kugel'+KugelnArray[all]+'" src="Kugel'+KugelnArray[all]+'.png" ></div><div style="top:'+KugelnOnTopArray[all]+'px;left:'+KugelnOnLeftArray[all]+'px;width:56px;height:56px;" id="Kugel'+KugelnArray[all]+'BlindButton" class="A ZI22" onmouseup="LogoLight('+KugelnArray[all]+',2)"></div>';
+				}
+				$('KugelContainer').innerHTML=theKugelContainerHTMLVary;
+			}
+
+
+			VerschiebungX=0;
+			VerschiebungY=0;
+
+		</script>
+	</head>
+	<body onload="init()"><div id="HintergrundColorierung" class="A W100_0 H100_0 toscana"></div><img src="Hintergrund.jpg" class="A H100_0 W100_0 OPA08"/><div id="HintergrundColorierung2" class="A W100_0 H100_0 toscana OPA02"></div>
+		<div id="KugelContainer" class="A DN ZI22"></div>
+		<div id="InventoryBoxContainer" class="A DN H100_0 W100_0 ZI19"><img class="A H100_0 W100_0 OPA07" id="InventoryBox" src="InventoryBoxHintergund.png" />
+			<b style="left:30px;" class="A T0_0 ZI21 Cgelb FS60">Inventory</b>
+			<div id="InventoryBoxContainerRandOben"	onmousedown="dragstart($('InventoryBoxContainer'))"></div>
+			<div id="InventoryBoxContainerRandunten"	onmousedown="dragstart($('InventoryBoxContainer'))"></div>
+			<div id="InventoryBoxContainerRandLinks"	onmousedown="dragstart($('InventoryBoxContainer'))"></div>
+			<div id="InventoryBoxContainerRandRechts"	onmousedown="dragstart($('InventoryBoxContainer'))"></div>
+			<div id="Prokel1" style="height:20px;width:20px;" class="A T0_0 L0_0 red ZI17" onmousedown="LogoLight(1,2,'close')"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<div id="InventoryBoxContainerPosiChangeButton" style="top:25px;height:20px;width:20px;" class="A L0_0 red ZI17" onmousedown="FensterPosiChange('InventoryBoxContainer')"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+			<div id="InventoryZoomen1" style="top:50px;height:20px;width:20px;" class="A L0_0 ZI19" onmousedown="InventoryZoomen(.5)"><img src="InventoryZoomen1.png" class="A H100_0 W100_0"/></div>
+			<div id="InventoryZoomen2" style="top:75px;height:20px;width:20px;" class="A L0_0 ZI19" onmousedown="InventoryZoomen(1)"><img src="InventoryZoomen2.png" class="A H100_0 W100_0"/></div>
+			<div id="InventoryZoomen3" style="top:100px;height:20px;width:20px;" class="A L0_0 ZI19" onmousedown="InventoryZoomen(2)"><img src="InventoryZoomen3.png" class="A H100_0 W100_0"/></div>
+			<div  id="InventoryInnerContainer" class="A L5_0 T5_0 W80_0 H90_0 ZI19"></div>
+			<div id="InventoryScrollenPlus" class="A L65_0 T85_0 W15_0 H10_0 ZI19 DN" onmousedown="InventoryScrollen(1)"><img src="InventoryScrollenPlus.png" class="A H100_0 W100_0"/></div>
+			<div id="InventoryScrollenMinus" class="A L45_0 T85_0 W15_0 H10_0 ZI19 DN" onmousedown="InventoryScrollen(-1)"><img src="InventoryScrollenMinus.png" class="A H100_0 W100_0"/></div>
+			<div id="InventorySortierContainerButton" style="height:40px;width:40px;" class="A L90_0 T0_0 ZI19" onmousedown="InventorySortierButtonSkalierer()"><img src="PopUp.png" class="A H100_0 W100_0"/></div>
+			<div id="InventorySortierContainer" style="width:60px;height:560px" class="A L80_0 T0_0 DN ZI19" onmouseout="$('InventorySortierContainer').style.display='none'" onmouseover="$('InventorySortierContainer').style.display='block'"><img src="pergament.png" class="A H100_0 W100_0"/>
+				<div id="InventoryAlleZeigen" title="Alle Zeigen" class="A L5_0 T5_0 W85_0 H10_0 ZI19 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1"	onmousedown="InventorySortierer('Alle')"><img class="A H100_0 W100_0" src="Sortieren_Alle.png"/></div>
+				<div id="InventoryAusruestungZeigen" title="Ausruestung Zeigen" class="A L5_0 T15_0 W85_0 H10_0 ZI19 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1"	onmousedown="InventorySortierer('Ausruestung')"><img class="A H100_0 W100_0" src="Sortieren_Ausruestung.png"/></div>
+				<div id="InventoryKopfZeigen" title="Kopf-Teile Zeigen" class="A L5_0 T25_0 W85_0 H10_0 ZI19 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1"	onmousedown="InventorySortierer('Kopf')"><img class="A H100_0 W100_0" src="Sortieren_Kopf.png"/></div>
+				<div id="InventoryTorsoZeigen" title="Torso-Teile Zeigen" class="A L5_0 T35_0 W85_0 H10_0 ZI19 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1"	onmousedown="InventorySortierer('Torso')"><img class="A H100_0 W100_0" src="Sortieren_Torso.png"/></div>
+				<div id="InventoryHandLinksZeigen" title="HandLinks-Teile Zeigen" class="A L5_0 T45_0 W85_0 H10_0 ZI19 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1"	onmousedown="InventorySortierer('HandLinks')"><img class="A H100_0 W100_0" src="Sortieren_HandLinks.png"/></div>
+				<div id="InventoryHandRechtsZeigen" title="HandRechts-Teile Zeigen" class="A L5_0 T55_0 W85_0 H10_0 ZI19 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1"	onmousedown="InventorySortierer('HandRechts')"><img class="A H100_0 W100_0" src="Sortieren_HandRechts.png"/></div>
+				<div id="InventoryBeineZeigen" title="Beine-Teile Zeigen" class="A L5_0 T65_0 W85_0 H10_0 ZI19 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1"	onmousedown="InventorySortierer('Beine')"><img class="A H100_0 W100_0" src="Sortieren_Beine.png"/></div>
+				<div id="InventoryFuesseZeigen" title="Fuesse-Teile Zeigen" class="A L5_0 T75_0 W85_0 H10_0 ZI19 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1"	onmousedown="InventorySortierer('Fuesse')"><img class="A H100_0 W100_0" src="Sortieren_Fuesse.png"/></div>
+				<div id="InventoryNahrungZeigen" title="Nahrung Zeigen" class="A L5_0 T85_0 W85_0 H10_0 ZI19 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1"	onmousedown="InventorySortierer('Nahrung')"><img class="A H100_0 W100_0" src="Sortieren_Nahrung.png"/></div>
+			</div>
+		</div>
+
+		<div id="CraftingBoxContainer" class="A DN H100_0 W100_0 ZI17"><img class="A H100_0 W100_0 OPA07" id="CraftingBox" src="CraftingBoxHintergund.jpg" />
+			<b style="left:30px;" class="A T0_0 ZI21 Cbraun FS60">Crafting</b>
+			<div id="CraftingKochtopfAusWahlButten" style="width:20px;height:20px" class="A L5_0 T5_0 ZI19" onmousedown="CraftingAusWahlButten('Kochtopf','SachenBasteln')"><img class="A H100_0 W100_0" src="MiniKochtopf.png" /></div>
+			<div id="CraftingSachenBastelnAusWahlButten" style="width:20px;height:20px" class="A L25_0 T5_0 ZI19" onmousedown="CraftingAusWahlButten('SachenBasteln','Kochtopf')"><img class="A H100_0 W100_0" src="MiniSachenBasteln.png" /></div>
+			<div id="KochtopfRezeptAussuchContainer" class="A L5_0 T5_0 W90_0 H90_0 DN ZI19"></div>
+			<div id="Kochtopf" class="A L5_0 T5_0 W80_0 H80_0"><img id="KochTopfBild1NichDa" src="pergament.png" class="A H100_0 W100_0 OPA05"/><img id="KochTopfBild1" ondblclick="CrafterChange('Kochtopf')" src="FrageZeichen.png" class="A H100_0 W100_0"/></div>
+			<div id="KochtopfRezeptKasten" class="A L95_0 T5_0 W80_0 H80_0"><img src="pergament.png" class="A H100_0 W100_0"/>
+				<div id="KochtopfZutat1" class="A L5_0 T5_0 W30_0 H20_0 yellow DN"><img class="A H100_0 W100_0" id="KochtopfZutat1Bild" src="" /><img class="A H100_0 W100_0" id="KochtopfZutat1Schatten" src="Schatten.png" /></div>
+				<div id="KochtopfZutat2" class="A L5_0 T35_0 W30_0 H20_0 yellow DN"><img class="A H100_0 W100_0" id="KochtopfZutat2Bild" src="" /><img class="A H100_0 W100_0" id="KochtopfZutat2Schatten" src="Schatten.png" /></div>
+				<div id="KochtopfZutat3" class="A L5_0 T65_0 W30_0 H20_0 yellow DN"><img class="A H100_0 W100_0" id="KochtopfZutat3Bild" src="" /><img class="A H100_0 W100_0" id="KochtopfZutat3Schatten" src="Schatten.png" /></div>
+				<div id="KochtopfZutat4" class="A L35_0 T5_0 W30_0 H20_0 yellow DN"><img class="A H100_0 W100_0" id="KochtopfZutat4Bild" src="" /><img class="A H100_0 W100_0" id="KochtopfZutat4Schatten" src="Schatten.png" /></div>
+				<div id="KochtopfZutat5" class="A L35_0 T35_0 W30_0 H20_0 yellow DN"><img class="A H100_0 W100_0" id="KochtopfZutat5Bild" src="" /><img class="A H100_0 W100_0" id="KochtopfZutat5Schatten" src="Schatten.png" /></div>
+				<div id="KochtopfZutat6" class="A L35_0 T65_0 W30_0 H20_0 yellow DN"><img class="A H100_0 W100_0" id="KochtopfZutat6Bild" src="" /><img class="A H100_0 W100_0" id="KochtopfZutat6Schatten" src="Schatten.png" /></div>
+			</div>
+			<div id="KochtopfCraftingButton" class="A">
+				<div id="KochtopfRezeptAusfuehren" title="KochtopfRezeptAusfuehren" class="A L5_0 T5_0 W80_0 H20_0" onmousedown="KochtopfRezeptAusfuehren()"><img src="KochtopfRezeptAusfuehren.png" class="A H100_0 W100_0"/></div>
+				<div id="KochtopfRezeptAussuchen" title="KochtopfRezeptAussuchen" class="A L5_0 T30_0 W80_0 H20_0" onmousedown="$('KochtopfRezeptAussuchContainer').style.display='block'"><img src="KochtopfRezeptAussuchen.png" class="A H100_0 W100_0"/></div>
+				<div id="KochtopfRezeptAbbrechen" title="KochtopfRezeptAbbrechen" class="A L5_0 T55_0 W80_0 H20_0" onmousedown="KochtopfRezeptAbbrechen()"><img src="KochtopfRezeptAbbrechen.png" class="A H100_0 W100_0"/></div>
+				<div id="KochtopfRezeptAnzeigen" title="KochtopfRezeptAnzeigen" class="A L5_0 T80_0 W80_0 H20_0"><img id="KochtopfRezeptAnzeigenBild" src="RezeptLeer.png" class="A H100_0 W100_0"/></div>
+			</div>
+			<div id="SachenBastelnRezeptAussuchContainer" class="A L5_0 T5_0 W90_0 H90_0 DN ZI19"></div>
+			<div id="SachenBasteln" class="A L5_0 T5_0 W80_0 H80_0 DN"><img id="SachenBastelnBild1NichDa" src="pergament.png" class="A H100_0 W100_0 OPA05"/><img id="SachenBastelnBild1" ondblclick="CrafterChange('SachenBasteln')" src="FrageZeichen.png" class="A H100_0 W100_0"/></div>
+			<div id="SachenBastelnRezeptKasten" class="A L95_0 T5_0 W80_0 H80_0 DN"><img src="pergament.png" class="A H100_0 W100_0"/>
+				<div id="SachenBastelnZutat1" class="A L5_0 T5_0 W30_0 H20_0 yellow DN"><img class="A H100_0 W100_0" id="SachenBastelnZutat1Bild" src="" /><img class="A H100_0 W100_0" id="SachenBastelnZutat1Schatten" src="Schatten.png" /></div>
+				<div id="SachenBastelnZutat2" class="A L5_0 T35_0 W30_0 H20_0 yellow DN"><img class="A H100_0 W100_0" id="SachenBastelnZutat2Bild" src="" /><img class="A H100_0 W100_0" id="SachenBastelnZutat2Schatten" src="Schatten.png" /></div>
+				<div id="SachenBastelnZutat3" class="A L5_0 T65_0 W30_0 H20_0 yellow DN"><img class="A H100_0 W100_0" id="SachenBastelnZutat3Bild" src="" /><img class="A H100_0 W100_0" id="SachenBastelnZutat3Schatten" src="Schatten.png" /></div>
+				<div id="SachenBastelnZutat4" class="A L35_0 T5_0 W30_0 H20_0 yellow DN"><img class="A H100_0 W100_0" id="SachenBastelnZutat4Bild" src="" /><img class="A H100_0 W100_0" id="SachenBastelnZutat4Schatten" src="Schatten.png" /></div>
+				<div id="SachenBastelnZutat5" class="A L35_0 T35_0 W30_0 H20_0 yellow DN"><img class="A H100_0 W100_0" id="SachenBastelnZutat5Bild" src="" /><img class="A H100_0 W100_0" id="SachenBastelnZutat5Schatten" src="Schatten.png" /></div>
+				<div id="SachenBastelnZutat6" class="A L35_0 T65_0 W30_0 H20_0 yellow DN"><img class="A H100_0 W100_0" id="SachenBastelnZutat6Bild" src="" /><img class="A H100_0 W100_0" id="SachenBastelnZutat6Schatten" src="Schatten.png" /></div>
+			</div>
+			<div id="SachenBastelnCraftingButton" class="A DN">
+				<div id="SachenBastelnRezeptAusfuehren" title="SachenBastelnRezeptAusfuehren" class="A L5_0 T5_0 W80_0 H20_0" onmousedown="SachenBastelnRezeptAusfuehren()"><img src="SachenBastelnRezeptAusfuehren.png" class="A H100_0 W100_0"/></div>
+				<div id="SachenBastelnRezeptAussuchen" title="SachenBastelnRezeptAussuchen" class="A L5_0 T30_0 W80_0 H20_0" onmousedown="$('SachenBastelnRezeptAussuchContainer').style.display='block'"><img src="SachenBastelnRezeptAussuchen.png" class="A H100_0 W100_0"/></div>
+				<div id="SachenBastelnRezeptAbbrechen" title="SachenBastelnRezeptAbbrechen" class="A L5_0 T55_0 W80_0 H20_0" onmousedown="SachenBastelnRezeptAbbrechen()"><img src="SachenBastelnRezeptAbbrechen.png" class="A H100_0 W100_0"/></div>
+				<div id="SachenBastelnRezeptAnzeigen" title="SachenBastelnRezeptAnzeigen" class="A L5_0 T80_0 W80_0 H20_0"><img id="SachenBastelnRezeptAnzeigenBild" src="BlueprintLeer.png" class="A H100_0 W100_0"/></div>
+			</div>
+			<div id="CraftingBoxContainerRandOben"		onmousedown="dragstart($('CraftingBoxContainer'))"></div>
+			<div id="CraftingBoxContainerRandunten"	onmousedown="dragstart($('CraftingBoxContainer'))"></div>
+			<div id="CraftingBoxContainerRandLinks"	onmousedown="dragstart($('CraftingBoxContainer'))"></div>
+			<div id="CraftingBoxContainerRandRechts"	onmousedown="dragstart($('CraftingBoxContainer'))"></div>
+			<div id="Prokel2" style="height:20px;width:20px;" class="A T0_0 L0_0 red ZI17" onmousedown="LogoLight(2,2,'close')"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<div id="CraftingBoxContainerPosiChangeButton" style="top:25px;height:20px;width:20px;" class="A L0_0 red ZI17" onmousedown="FensterPosiChange('CraftingBoxContainer')"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+		</div>
+
+		<div id="CharakterBoxContainer" class="A DN H100_0 W100_0 ZI17"><img class="A H100_0 W100_0 OPA07" id="CharakterBox" src="CharakterBoxHintergund.jpg" />
+			<b style="left:30px;" class="A T0_0 ZI21 Cgruen FS60">Charackter-Box</b>
+			<div id="KoerperAnzeigeContainer" class="A L5_0 T5_0 W80_0 H80_0"><img class="A H100_0 W100_0" src="Charakterpergament.png" />
+				<div	class="A L38_0 T8_0 W25_0 H25_0 ZI19"	onmousedown="KlamottenWechsel('Kopf')"				id="Kopf">			<img class="A H100_0 W100_0 DN" src="" id="KopfBild"/></div>
+				<div	class="A L32_0 T24_0 W38_0 H38_0 ZI18"	onmousedown="KlamottenWechsel('Torso')"			id="Torso">			<img class="A H100_0 W100_0 DN" src="" id="TorsoBild"/></div>
+				<div	class="A L10_0 T40_0 W25_0 H20_0 ZI17"	onmousedown="KlamottenWechsel('HandLinks')"		id="HandLinks">	<img class="A H100_0 W100_0 DN" src="" id="HandLinksBild"/></div>
+				<div	class="A L70_0 T40_0 W25_0 H20_0 ZI17"	onmousedown="KlamottenWechsel('HandRechts')"		id="HandRechts">	<img class="A H100_0 W100_0 DN" src="" id="HandRechtsBild"/></div>
+				<div	class="A L32_0 T54_0 W40_0 H37_0 ZI17"	onmousedown="KlamottenWechsel('Beine')"			id="Beine">			<img class="A H100_0 W100_0 DN" src="" id="BeineBild"/></div>
+				<div	class="A L27_0 T75_0 W47_0 H20_0 ZI16"	onmousedown="KlamottenWechsel('Fuesse')"			id="Fuesse">		<img class="A H100_0 W100_0 DN" src="" id="FuesseBild"/></div>
+			</div>
+			<div id="CharakterBoxContainerRandOben"	onmousedown="dragstart($('CharakterBoxContainer'))"></div>
+			<div id="CharakterBoxContainerRandunten"	onmousedown="dragstart($('CharakterBoxContainer'))"></div>
+			<div id="CharakterBoxContainerRandLinks"	onmousedown="dragstart($('CharakterBoxContainer'))"></div>
+			<div id="CharakterBoxContainerRandRechts"	onmousedown="dragstart($('CharakterBoxContainer'))"></div>
+			<div id="Prokel3" style="height:20px;width:20px;" class="A T0_0 L0_0 red ZI17" onmousedown="LogoLight(3,2,'close')"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<div id="CharakterBoxContainerPosiChangeButton" style="top:25px;height:20px;width:20px;" class="A L0_0 red ZI17" onmousedown="FensterPosiChange('CharakterBoxContainer')"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+		</div>
+
+		<div id="AvatarWerteBoxContainer" class="A DN H100_0 W100_0 ZI17"><img class="A H100_0 W100_0 OPA07" id="AvatarWerteBox" src="AvatarWerteBoxHintergund.jpg" />
+			<b style="left:30px;" class="A T0_0 ZI21 Cblau FS60">AvatarWerteBox</b>
+			<img src="pergament.png"  class="A W30_0 H20_0 L25_0 T10_0"/><input id="RuestungWert" value="" class="A W30_0 H20_0 L25_0 T10_0 TXTC FS200 BN transparent"/>
+			<img src="pergament.png" class="A W30_0 H20_0 L25_0 T40_0"/><input id="AngriffWert" value="" class="A W30_0 H20_0 L25_0 T40_0 TXTC FS200 BN transparent"/>
+			<img src="pergament.png" class="A W30_0 H20_0 L25_0 T70_0"/><input id="GesamtGewichtsWert" value="" class="A W30_0 H20_0 L25_0 T70_0 TXTC FS200 BN transparent"/>
+			<img src="pergament.png" class="A W30_0 H20_0 L65_0 T70_0"/><input id="FadenKreuzPowerAnzeige" class="A W30_0 H20_0 L65_0 T70_0 TXTC FS200 BN transparent"/>
+			<img src="RuestungsBild.png" class="A W20_0 H20_0 L5_0 T10_0"/>
+			<img src="AngriffsBild.png" class="A W20_0 H20_0 L5_0 T40_0"/>
+			<img src="GewichtsBild.png" class="A W20_0 H20_0 L5_0 T70_0"/>
+			<div id="AvatarWerteBoxContainerRandOben"		onmousedown="dragstart($('AvatarWerteBoxContainer'))"></div>
+			<div id="AvatarWerteBoxContainerRandunten"	onmousedown="dragstart($('AvatarWerteBoxContainer'))"></div>
+			<div id="AvatarWerteBoxContainerRandLinks"	onmousedown="dragstart($('AvatarWerteBoxContainer'))"></div>
+			<div id="AvatarWerteBoxContainerRandRechts"	onmousedown="dragstart($('AvatarWerteBoxContainer'))"></div>
+			<div id="Prokel4" style="height:20px;width:20px;" class="A T0_0 L0_0 red ZI17" onmousedown="LogoLight(4,2,'close')"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<div id="AvatarWerteBoxContainerPosiChangeButton" style="top:25px;height:20px;width:20px;" class="A L0_0 red ZI17" onmousedown="FensterPosiChange('AvatarWerteBoxContainer')"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+		</div>
+
+		<div id="VehikelBoxContainer" class="A DN H100_0 W100_0 ZI17"><img class="A H100_0 W100_0 OPA07" id="VehikelBox" src="VehikelBoxHintergund.jpg" />
+			<b style="left:30px;" class="A T0_0 ZI21 Crot FS60">VehikelBox</b>
+			<div id="AutoInventoryOpener" style="top:55px;height:20px;width:20px;" class="A L0_0 red ZI17" onmousedown="$('AutoInventoryInnerContainer').style.display='block',AutoInventoryGecheckt=false,AutoInventoryChecker()"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+			<div id="AutoInventoryCloser" style="top:85px;height:20px;width:20px;" class="A L0_0 red ZI17" onmousedown="$('AutoInventoryInnerContainer').style.display='none'"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+			<div id="AutoInventoryInnerContainer" class="A T5_0 L5_0 W80_0 H80_0 ZI23 DN"></div>
+			<div id="VehikelContainer" class="A H85_0 W85_0 T5_0 L5_0 ZI17"><img src="pergament.png" class="A W100_0 H100_0"/>
+				<div id="Chassie" class="A H55_0 W45_0 T25_0 L25_0 ZI17"><img id="ChassieBild" src="Chassie.png" class="A W100_0 H100_0"/></div>
+				<div id="ReifenLinksOben"		onmousedown="AutoTeileWechsel('ReifenLinksOben')" class="A H15_0 W15_0 T25_0 L10_5 ZI17"><img id="ReifenLinksObenBild" src="pergament.png" class="A W100_0 H100_0"/></div>
+				<div id="ReifenLinksUnten"		onmousedown="AutoTeileWechsel('ReifenLinksUnten')" class="A H15_0 W15_0 T65_0 L10_5 ZI17"><img id="ReifenLinksUntenBild" src="pergament.png" class="A W100_0 H100_0"/></div>
+				<div id="ReifenRechtsOben"		onmousedown="AutoTeileWechsel('ReifenRechtsOben')" class="A H15_0 W15_0 T25_0 L70_0 ZI17"><img id="ReifenRechtsObenBild" src="pergament.png" class="A W100_0 H100_0"/></div>
+				<div id="ReifenRechtsUnten"	onmousedown="AutoTeileWechsel('ReifenRechtsUnten')" class="A H15_0 W15_0 T65_0 L70_0 ZI17"><img id="ReifenRechtsUntenBild" src="pergament.png" class="A W100_0 H100_0"/></div>
+				<div id="MotorBlock"	onmousedown="AutoTeileWechsel('MotorBlock')" class="A H15_0 W20_0 T30_0 L38_0 ZI17"><img id="MotorBlockBild" src="pergament.png" class="A W100_0 H100_0"/></div>
+				<div id="BatterieBlock"	onmousedown="AutoTeileWechsel('BatterieBlock')" class="A H13_0 W20_0 T47_0 L38_0 ZI17"><img id="BatterieBlockBild" src="pergament.png" class="A W100_0 H100_0"/></div>
+				<div id="EnergieBlock"	onmousedown="AutoTeileWechsel('EnergieBlock')" class="A H15_0 W20_0 T62_0 L38_0 ZI17"><img id="EnergieBlockBild" src="pergament.png" class="A W100_0 H100_0"/></div>
+			</div>
+			<div id="VehikelBoxContainerRandOben"		onmousedown="dragstart($('VehikelBoxContainer'))"></div>
+			<div id="VehikelBoxContainerRandunten"		onmousedown="dragstart($('VehikelBoxContainer'))"></div>
+			<div id="VehikelBoxContainerRandLinks"		onmousedown="dragstart($('VehikelBoxContainer'))"></div>
+			<div id="VehikelBoxContainerRandRechts"	onmousedown="dragstart($('VehikelBoxContainer'))"></div>
+			<div id="Prokel5" style="height:20px;width:20px;" class="A T0_0 L0_0 red ZI17" onmousedown="LogoLight(5,2,'close')"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<div id="VehikelBoxContainerPosiChangeButton" style="top:25px;height:20px;width:20px;" class="A L0_0 red ZI17" onmousedown="FensterPosiChange('VehikelBoxContainer')"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+		</div>
+
+		<div id="OptionsBoxContainer" class="A DN H100_0 W100_0 ZI17"><img class="A H100_0 W100_0 OPA07" id="OptionsBox" src="OptionsBoxHintergund.jpg" />
+			<b style="left:30px;" class="A T0_0 ZI21 Crot FS60">OptionsBox</b>
+			<div id="OptionsBoxContainerRandOben"		onmousedown="dragstart($('OptionsBoxContainer'))"></div>
+			<div id="OptionsBoxContainerRandunten"		onmousedown="dragstart($('OptionsBoxContainer'))"></div>
+			<div id="OptionsBoxContainerRandLinks"		onmousedown="dragstart($('OptionsBoxContainer'))"></div>
+			<div id="OptionsBoxContainerRandRechts"	onmousedown="dragstart($('OptionsBoxContainer'))"></div>
+			<div id="Prokel6" style="height:20px;width:20px;" class="A T0_0 L0_0 red ZI17" onmousedown="LogoLight(6,2,'close')"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<div id="OptionsBoxContainerPosiChangeButton" style="top:25px;height:20px;width:20px;" class="A L0_0 red ZI17" onmousedown="FensterPosiChange('OptionsBoxContainer')"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+		</div>
+
+		<div id="OptionsBox2Container" class="A DN H100_0 W100_0 ZI17"><img class="A H100_0 W100_0 OPA05" id="OptionsBox2" src="OptionsBox2Hintergund.jpg" />
+			<b style="left:30px;" class="A T0_0 ZI21 Crot FS60">OptionsBox2</b>
+			<div id="OptionsBox2ContainerRandOben"		onmousedown="dragstart($('OptionsBox2Container'))"></div>
+			<div id="OptionsBox2ContainerRandunten"	onmousedown="dragstart($('OptionsBox2Container'))"></div>
+			<div id="OptionsBox2ContainerRandLinks"	onmousedown="dragstart($('OptionsBox2Container'))"></div>
+			<div id="OptionsBox2ContainerRandRechts"	onmousedown="dragstart($('OptionsBox2Container'))"></div>
+			<div id="Prokel7" style="height:20px;width:20px;" class="A T0_0 L0_0 red ZI17" onmousedown="LogoLight(7,2,'close')"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<div id="OptionsBox2ContainerPosiChangeButton" style="top:25px;height:20px;width:20px;" class="A L0_0 red ZI17" onmousedown="FensterPosiChange('OptionsBox2Container')"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+		</div>
+		<div id="OptionsBox3Container" class="A DN H100_0 W100_0 ZI17"><img class="A H100_0 W100_0 OPA05" id="OptionsBox3" src="OptionsBox3Hintergund.jpg" />
+			<b style="left:30px;" class="A T0_0 ZI21 Crot FS60">OptionsBox3</b>
+			<div id="OptionsBox3ContainerRandOben"		onmousedown="dragstart($('OptionsBox3Container'))"></div>
+			<div id="OptionsBox3ContainerRandunten"	onmousedown="dragstart($('OptionsBox3Container'))"></div>
+			<div id="OptionsBox3ContainerRandLinks"	onmousedown="dragstart($('OptionsBox3Container'))"></div>
+			<div id="OptionsBox3ContainerRandRechts"	onmousedown="dragstart($('OptionsBox3Container'))"></div>
+			<div id="Prokel8" style="height:20px;width:20px;" class="A T0_0 L0_0 red ZI17" onmousedown="LogoLight(8,2,'close')"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<div id="OptionsBox3ContainerPosiChangeButton" style="top:25px;height:20px;width:20px;" class="A L0_0 red ZI17" onmousedown="FensterPosiChange('OptionsBox3Container')"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+		</div>
+		<div id="OptionsBox4Container" class="A DN H100_0 W100_0 ZI17"><img class="A H100_0 W100_0 OPA05" id="OptionsBox4" src="OptionsBox4Hintergund.jpg" />
+			<b style="left:30px;" class="A T0_0 ZI21 Crot FS60">OptionsBox4</b>
+			<div id="OptionsBox4ContainerRandOben"		onmousedown="dragstart($('OptionsBox4Container'))"></div>
+			<div id="OptionsBox4ContainerRandunten"	onmousedown="dragstart($('OptionsBox4Container'))"></div>
+			<div id="OptionsBox4ContainerRandLinks"	onmousedown="dragstart($('OptionsBox4Container'))"></div>
+			<div id="OptionsBox4ContainerRandRechts"	onmousedown="dragstart($('OptionsBox4Container'))"></div>
+			<div id="Prokel9" style="height:20px;width:20px;" class="A T0_0 L0_0 red ZI17" onmousedown="LogoLight(9,2,'close')"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<div id="OptionsBox4ContainerPosiChangeButton" style="top:25px;height:20px;width:20px;" class="A L0_0 red ZI17" onmousedown="FensterPosiChange('OptionsBox4Container')"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+		</div>
+
+		<div id="WeltKartenModusContainer" class="A DN BB H100_0 W100_0 ZI17"><img class="A H100_0 W100_0 OPA05" id="WeltKartenModus" src="WeltKartenModusHintergund.jpg" />
+			<b style="left:30px;" class="A T0_0 ZI21 Crot FS60">WeltKartenModus</b>
+			<div id="WeltKartenModusFuellHTML" class="A H100_0 W100_0"></div>
+			<div id="WeltKartenModusZoomContainerButton" style="height:40px;width:40px;" class="A L90_0 T0_0 ZI22" onmousedown="WeltKartenModusZoomButtonSkalierer()"><img src="PopUp.png" class="A H100_0 W100_0"/></div>
+			<div id="WeltKartenModusZoomContainer" style="width:60px;height:560px" class="A L80_0 T0_0 DN ZITop3000" onmouseout="this.style.display='none'" onmouseover="this.style.display='block'"><img src="pergament.png" class="A H100_0 W100_0"/>
+				<div id="WeltKartenModusZoom5" class="A L5_0 T5_0 H10_0 W85_0 ZITop3000 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1" onmousedown="WeltKartenModusZoom(0,5)"><img src="WeltKarteZoomen5.png" class="A H100_0 W100_0"/></div>
+				<div id="WeltKartenModusZoom10" class="A L5_0 T15_0 H10_0 W85_0 ZITop3000 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1" onmousedown="WeltKartenModusZoom(0,10)"><img src="WeltKarteZoomen10.png" class="A H100_0 W100_0"/></div>
+				<div id="WeltKartenModusZoom15" class="A L5_0 T25_0 H10_0 W85_0 ZITop3000 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1" onmousedown="WeltKartenModusZoom(0,15)"><img src="WeltKarteZoomen15.png" class="A H100_0 W100_0"/></div>
+				<div id="WeltKartenModusZoom22" class="A L5_0 T35_0 H10_0 W85_0 ZITop3000 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1" onmousedown="WeltKartenModusZoom(0,22)"><img src="WeltKarteZoomen20.png" class="A H100_0 W100_0"/></div>
+				<div id="WeltKartenModusZoom30" class="A L5_0 T45_0 H10_0 W85_0 ZITop3000 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1" onmousedown="WeltKartenModusZoom(0,30)"><img src="WeltKarteZoomen30.png" class="A H100_0 W100_0"/></div>
+				<div id="WeltKartenModusZoom45" class="A L5_0 T55_0 H10_0 W85_0 ZITop3000 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1" onmousedown="WeltKartenModusZoom(0,45)"><img src="WeltKarteZoomen45.png" class="A H100_0 W100_0"/></div>
+				<div id="WeltKartenModusZoomAll" class="A L5_0 T65_0 H10_0 W85_0 ZITop3000 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1" onmousedown="WeltKartenModusZoom(0,WeltKarteBreiteOrgi.length)"><img src="WeltKarteZoomenAll.png" class="A H100_0 W100_0"/></div>
+				<div id="WeltKartenModusZoomIn" class="A L5_0 T75_0 H10_0 W85_0 ZITop3000 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1" onmousedown="WeltKartenModusZoom(1,0)"><img src="ZoomIn.png" class="A H100_0 W100_0"/></div>
+				<div id="WeltKartenModusZoomOut" class="A L5_0 T85_0 H10_0 W85_0 ZITop3000 OPA05" onmouseout="this.style.opacity=0.5" onmouseover="this.style.opacity=1" onmousedown="WeltKartenModusZoom(-1,0)"><img src="ZoomOut.png" class="A H100_0 W100_0"/></div>
+			</div>
+			<div id="WeltKartenModusContainerRandOben"	onmousedown="dragstart($('WeltKartenModusContainer'))"></div>
+			<div id="WeltKartenModusContainerRandunten"	onmousedown="dragstart($('WeltKartenModusContainer'))"></div>
+			<div id="WeltKartenModusContainerRandLinks"	onmousedown="dragstart($('WeltKartenModusContainer'))"></div>
+			<div id="WeltKartenModusContainerRandRechts"	onmousedown="dragstart($('WeltKartenModusContainer'))"></div>
+			<div id="Prokel10" style="height:20px;width:20px;" class="A T0_0 L0_0 red ZI17" onmousedown="LogoLight(10,2,'close')"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<div id="WeltKartenModusContainerPosiChangeButton" style="top:25px;height:20px;width:20px;" class="A L0_0 red ZI17" onmousedown="FensterPosiChange('WeltKartenModusContainer')"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+		</div>
+
+		<div id="ZeltDrinnenContainer" class="A DN ZI22 L25_0 T25_0 W50_0 H50_0"><img src="ZeltDrinnen.png" class="A H100_0 W100_0"/>
+			<div id="ProkelZelt" style="height:20px;width:20px;" class="A T5_0 L5_0 red ZI17" onmousedown="$('ZeltDrinnenContainer').style.display='none',KarteBecklickbar=true"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<div id="ZeltInventoryContainer" class="A ZI22 L25_0 T25_0 W50_0 H50_0 red"></div>
+		</div>
+
+		<div id="ToterKrebsDrinnenContainer" class="A DN ZI22 L35_0 T35_0 W20_0 H20_0 OPA08"><img src="pergament.png" class="A H100_0 W100_0"/>
+			<div id="ProkelToterKrebs" style="height:20px;width:20px;" class="A T5_0 L5_0 red ZI17" onmousedown="$('ToterKrebsDrinnenContainer').style.display='none',KarteBecklickbar=true"><img src="FensterPosiChange.png" class="A H100_0 W100_0"/></div>
+			<img src="Muffeln.png" class="A L75_0 T75_0 W20_0 H20_0"/><div id="ToterKrebsMuffelnMengeToterKrebs" class="A L75_0 T75_0 W20_0 H20_0" onmousedown="$('ToterKrebsDrinnenContainer').style.display='none',KarteBecklickbar=true,Einsammeln('Nahrung_KrebsFleisch',0,0,12,2,4,'KrebsFleisch')"></div>
+			<img id="ToterKrebsMuffelnBild" src="Nahrung_Krebsfleisch.png" class="A L25_0 T25_0 W40_0 H40_0"/>
+		</div>
+
+		<div id="WasserQuelleContainer" class="A DN ZI22 L35_0 T35_0 W20_0 H20_0 OPA08"><img src="pergament.png" class="A H100_0 W100_0"/>
+			<div id="ProkelWasserQuelle" style="height:20px;width:20px;" class="A T5_0 L5_0 red ZI17" onmousedown="$('WasserQuelleContainer').style.display='none',MausX=false,MausY=false,KarteBecklickbar=true;"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<img src="Tropfen.png" class="A L35_0 T35_0 W20_0 H20_0"/><div id="WasserQuelleMengeWasser" class="A L35_0 T35_0 W20_0 H20_0"></div>
+		</div>
+
+		<div id="BaumMuffeln" class="A DN ZI22 L35_0 T35_0 W20_0 H20_0 OPA08"><img src="pergament.png" class="A H100_0 W100_0"/>
+			<div id="ProkelBaumMuffeln" style="height:20px;width:20px;" class="A T5_0 L5_0 red ZI17" onmousedown="$('BaumMuffeln').style.display='none',KarteBecklickbar=true"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<img src="Muffeln.png" class="A L75_0 T75_0 W20_0 H20_0"/><div id="BaumMuffelnMengeBaum" class="A L75_0 T75_0 W20_0 H20_0" onmousedown="EinsammelnAuswahl('Baum','Baum')"></div>
+			<img id="BaumMuffelnBild" src="" class="A L25_0 T25_0 W40_0 H40_0"/>
+		</div>
+
+		<div id="BushMuffeln" class="A DN ZI22 L35_0 T35_0 W20_0 H20_0 OPA08"><img src="pergament.png" class="A H100_0 W100_0"/>
+			<div id="ProkelBushMuffeln" style="height:20px;width:20px;" class="A T5_0 L5_0 red ZI17" onmousedown="$('BushMuffeln').style.display='none',KarteBecklickbar=true"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<img src="Muffeln.png" class="A L75_0 T75_0 W20_0 H20_0"/><div id="BushMuffelnMengeBush" class="A L75_0 T75_0 W20_0 H20_0" onmousedown="EinsammelnAuswahl('Bush','Bush')"></div>
+			<img id="BushMuffelnBild" src="" class="A L25_0 T25_0 W40_0 H40_0"/>
+		</div>
+
+		<div id="LebensAnzeigeContainer" class="A">
+			<div id="HungerAnzeigeContainer" class="A L5_0 T5_0 W8_0 H90_0"><img src="pergament.png" class="A H100_0 W100_0"/><img src="Hunger.png" class="A L25_0 T5_0  H50_0 W50_0"/>
+				<img src="pergamentDunkel.png" class="A L15_0 B5_0 W70_0 H40_0"/><input id="HungerWert" value="0" class="A BN transparent TXTC FontBold L15_0 B5_0 W70_0 H40_0"/>
+			</div>
+			<div id="DurstAnzeigeContainer" class="A L18_0 T5_0 W8_0 H90_0"><img src="pergament.png" class="A H100_0 W100_0"/><img src="Durst.png" class="A L25_0 T5_0  H50_0 W50_0"/>
+				<img src="pergamentDunkel.png" class="A L15_0 B5_0 W70_0 H40_0"/><input id="DurstWert" value="0" class="A BN transparent TXTC FontBold L15_0 B5_0 W70_0 H40_0"/>
+			</div>
+			<div id="GesundheitGeistAnzeigeContainer" class="A L31_0 T5_0 W8_0 H90_0"><img src="pergament.png" class="A H100_0 W100_0"/><img src="GesundheitGeist.png" class="A L25_0 T5_0  H50_0 W50_0"/>
+				<img src="pergamentDunkel.png" class="A L15_0 B5_0 W70_0 H40_0"/><input id="GesundheitGeistWert" value="0" class="A BN transparent TXTC FontBold L15_0 B5_0 W70_0 H40_0"/>
+			</div>
+			<div id="GesundheitKoerperAnzeigeContainer" class="A L44_0 T5_0 W8_0 H90_0"><img src="pergament.png" class="A H100_0 W100_0"/><img src="GesundheitKoerper.png" class="A L25_0 T5_0  H50_0 W50_0"/>
+				<img src="pergamentDunkel.png" class="A L15_0 B5_0 W70_0 H40_0"/><input id="GesundheitKoerperWert" value="0" class="A BN transparent TXTC FontBold L15_0 B5_0 W70_0 H40_0"/>
+			</div>
+			<div id="ErschoepfungAnzeigeContainer" class="A L57_0 T5_0 W8_0 H90_0"><img src="pergament.png" class="A H100_0 W100_0"/><img src="Erschoepfung.png" class="A L25_0 T5_0  H50_0 W50_0"/>
+				<img src="pergamentDunkel.png" class="A L15_0 B5_0 W70_0 H40_0"/><input id="ErschoepfungWert" value="0" class="A BN transparent TXTC FontBold L15_0 B5_0 W70_0 H40_0"/>
+			</div>
+			<div id="MuedeAnzeigeContainer" class="A L70_0 T5_0 W8_0 H90_0"><img src="pergament.png" class="A H100_0 W100_0"/><img src="Muede.png" class="A L25_0 T5_0  H50_0 W50_0"/>
+				<img src="pergamentDunkel.png" class="A L15_0 B5_0 W70_0 H40_0"/><input id="MuedeWert" value="0" class="A BN transparent TXTC FontBold L15_0 B5_0 W70_0 H40_0"/>
+			</div>
+			<div id="AtemAnzeigeContainer" class="A L83_0 T5_0 W8_0 H90_0"><img src="pergament.png" class="A H100_0 W100_0"/><img src="Atem.png" class="A L25_0 T5_0  H50_0 W50_0"/>
+				<img src="pergamentDunkel.png" class="A L15_0 B5_0 W70_0 H40_0"/><input id="AtemWert" value="0" class="A BN transparent TXTC FontBold L15_0 B5_0 W70_0 H40_0"/>
+			</div>
+		</div>
+
+		<div id="AckerDrinnenContainer" class="A T0_0 L0_0 W100_0 H100_0 ZI20 DN"><img src="AckerDrinnenContainer.png" class="A H100_0 W100_0"/>
+			<div id="ProkelAcker" style="height:20px;width:20px;" class="A T5_0 L5_0 red ZI22" onmousedown="AckerSichtWegmachen()"><img src="FensterZu.png" class="A H100_0 W100_0"/></div>
+			<div id="AckerFelder" class="A T5_0 L15_0 W70_0 H70_0 ZI20"></div>
+			<div id="PflanzenInfoKasten" class="A T80_0 L10_0 W80_0 H15_0 ZI20 BB">
+				<div id="MarkiertesFeldAnsicht" class="A T10_0 L5_0 W20_0 H80_0 ZI20 BB"><img id="MarkiertesFeldAnsichtBild" src="" class="A W100_0 H100_0 ZI20 BB" /></div>
+				<div id="AckerAktionAussuchen" class="A T10_0 L35_0 W10_0 H80_0 ZI20 BB"></div>
+				<div id="AckerAktionAusfuehren" class="A T10_0 L50_0 W10_0 H80_0 ZI20 BB" onmousedown="SamenSetzen()"></div>
+				<div id="ManoevrierContainer" class="A T10_0 L75_0 W20_0 H80_0 ZI20 BB">
+					<div id="ManoevrierOben" class="A T10_0 L35_0 W20_0 H20_0 ZI23 BB" onmousedown="AckerFeldManoevrierer('Oben')"></div>
+					<div id="ManoevrierUnten" class="A T65_0 L35_0 W20_0 H20_0 ZI23 BB" onmousedown="AckerFeldManoevrierer('Unten')"></div>
+					<div id="ManoevrierLinks" class="A T35_0 L5_0 W20_0 H20_0 ZI23 BB" onmousedown="AckerFeldManoevrierer('Links')"></div>
+					<div id="ManoevrierRechts" class="A T35_0 L65_0 W20_0 H20_0 ZI23 BB" onmousedown="AckerFeldManoevrierer('Rechts')"></div>
+				</div>
+			</div>
+		</div>
+
+		<div id="WeltHinterGrundFake" class="A"><img src="WeltHinterGrundFake.png" class="A H100_0 W100_0"/></div>
+
+		<div id="Welt" class="A DN OFH">
+			<div id="FussballFeld" class="A L0_0 T0_0 W100_0 H100_0 DN ZI6"><img id="FussballFeldBild" src="FussballFeld.png" class="A H100_0 W100_0"/></div>
+			<div id="AckerContainer"></div>
+			<div id="Ball" class="A L74_0 T74_0 W2_0 H2_0 ZI9"><img id="BallBild" src="Ball.png" class="A H100_0 W100_0"/></div>
+			<div id="BlauerKasten" style="position:absolute;left:5%;top:5%;width:1%;height:1%;z-index:4;background-color:blue;"></div>
+			<div id="ZielScheibe" style="position:absolute;left:55%;top:55%;width:4%;height:4%;z-index:4;"><img id="ZielScheibeBild" class="A W100_0 H100_0 ZI6" src="ZielScheibe.png"/></div>
+			<div id="Auto" style="position:absolute;left:75%;top:75%;width:8%;height:8%;z-index:6;"><img id="AutoBild" class="A W100_0 H100_0 Z6" src="Avatar/AutoR1.png"/></div>
+			<div id="Krebs" style="position:absolute;width:6%;height:6%;z-index:6;display:none;"><img id="KrebsBild" class="A W100_0 H100_0 Z6" src="KrebsRechts.png"/></div>
+			<div id="Zombie" style="position:absolute;width:6%;height:6%;z-index:6;display:none;"><img id="ZombieBild" class="A W100_0 H100_0 Z6" src="ZombieRechts.png"/></div>
+			<div id="BraunBaer" style="position:absolute;width:6%;height:6%;z-index:6;display:none;"><img id="BraunBaerBild" class="A W100_0 H100_0 Z6" src="BraunBaerRechts.png"/></div>
+			<div id="EisBaer" style="position:absolute;width:6%;height:6%;z-index:6;display:none;"><img id="EisBaerBild" class="A W100_0 H100_0 Z6" src="EisBaerRechts.png"/></div>
+			<div id="ToterGegnerMuffelContainer" class="A"></div>
+			<div id="ToterGegnerContainer" class="A"></div>
+			<div id="WolkenKontainer" class="A L4_0 T4_0 W92_0 H92_0 ZI9 OFH"></div>
+			<div id="Nacht" class="A L4_0 T4_0 W92_0 H92_0 ZI12">
+				<img id="Nachtbild" src="Tageszeit0.png" class="A H100_0 W100_0"/>
+			</div>
+			<div id="NachtSichtGruen" class="A L4_0 T4_0 W92_0 H92_0 ZI12 DN">
+				<img id="NachtSichtGruenbild" src="NachtSichtGruen.png" class="A H100_0 W100_0"/>
+			</div>
+			<div id="theBackground"></div>
+			<div id="theErsteEbeneHTML"></div>
+			<div id="theZweiteEbeneHTML"></div>
+			<div id="theDritteEbeneHTML"></div>
+			<div id="theVierteEbeneHTML"></div>
+			<div id="theFuenfteEbeneHTML"></div>
+			<div id="theSechsteEbeneHTML"></div>
+			<div id="theFog" class="ZI19"></div>
+			<img id="Ast" class="A L30_0 T30_0 W10_0 H10_0 ZI6" src="Ast1.png"/>
+			<div id="AvatarContainer" class="A L37_0 T33_0 W5_0 H5_0">
+				<img id="AvatarTorso" class="A L0_0 T0_0 W42_0 H42_0 ZI7" src="Avatar1.png"/>
+				<img id="AvatarKopf" class="A L0_0 T0_0 W42_0 H42_0 ZI7" src="Avatar1.png"/>
+			</div>
+			<div id="theBush"></div>
+			<div id="theBaum"></div>
+			<div id="MauseFalleContainer"><img src="MauseFalle.png" id="MauseFalle" class="A T45_0 L45_0 DN W10_0 H10_0 ZI7"/></div>
+			<div id="ZeltContainer"><img src="Zelt.png" id="Zelt" class="A T45_0 L45_0 DN W10_0 H10_0 ZI7"/></div>
+			<img src="SteinMiene0.png" id="SteinMiene" class="A T45_0 L45_0 W10_0 H10_0 ZI7"/>
+			<img src="WasserQuelle0.png" id="WasserQuelle" class="A T55_0 L45_0 W10_0 H10_0 ZI7"/>
+			<div id="RandOben"></div>
+			<div id="Randunten"></div>
+			<div id="RandLinks"></div>
+			<div id="RandRechts"></div>
+
+			<div id="KampfFenster" class="A T0_0 L0_0 W100_0 H100_0 ZI20 DN"><img src="KampfFensterHintergrund.jpg" class="A W100_0 H100_0 ZI20"/>
+
+				<div id="GegnerHatSchadenBekommenContainer" class="A T78_0 L70_0 W8_0 H8_0 ZI20 DN"><img src="Baaam.png" id="GegnerHatSchadenBekommenBild" class="A T0_0 L0_0 W100_0 H100_0 ZI20"/><div id="GegnerHatSchadenBekommen" class="A T0_0 L0_0 W100_0 H100_0 ZI20 FS300 Cwhite TXTC"></div></div>
+				<div id="AvatarHatSchadenBekommenContainer" class="A T78_0 L82_0 W8_0 H8_0 ZI20 DN"><img src="Baaam.png" id="AvatarHatSchadenBekommenBild" class="A T0_0 L0_0 W100_0 H100_0 ZI20"/><div id="AvatarHatSchadenBekommen" class="A T0_0 L0_0 W100_0 H100_0 ZI20 FS300 Cwhite TXTC"></div></div>
+
+				<img src="KampfFensterHintergrund.jpg" class="A T30_0 L15_0 W8_0 H8_0 ZI20"/><div id="AktuelleInitiative" class="A T30_0 L15_0 W8_0 H8_0 ZI20 FS300 Cwhite TXTC"></div>
+				<img id="KampfFensterGegnerBild" src="" class="A T78_0 L70_0 W8_0 H8_0 ZI20" onmouseup="SagMirDieAvatarKampfWerte()"/>
+				<img src="pergament.png" class="A T87_0 L72_0 W4_0 H4_0 ZI20"/>
+				<div id="GegnerInitiative" class="A T87_0 L72_0 W4_0 H4_0 ZI20 TXTC Cblau FS120"></div>
+				<div id="KampfFensterGegnerLebensPunkteContainer" class="A T92_0 L70_0 W8_0 H4_0 ZI20">
+					<img src="LebensWerteBox.png" class="A W100_0 H100_0 ZI20"/>
+					<div id="AktuelleLebensPunkteGegnerContainer" class="A T0_0 L0_0 W50_0 H50_0 Crot ZI20 TXTC"></div>
+					<div id="UngefaehrGegnerLebensPunkteContainer" class="A T0_0 L50_0 W50_0 H50_0 Cgruen ZI20 TXTC"></div>
+				</div>
+				<img id="KampfFensterAvatarBild" src="KampfFensterAvatarBild.png" class="A T78_0 L82_0 W8_0 H8_0 ZI20" onmouseup="SagMirDieAvatarKampfWerte()"/>
+				<img src="pergament.png" class="A T87_0 L84_0 W4_0 H4_0 ZI20"/>
+				<div id="AvatarInitiative" class="A T87_0 L84_0 W4_0 H4_0 ZI20 TXTC Cblau FS120"></div>
+				<div id="KampfFensterAvatarLebensPunkteContainer" class="A T92_0 L82_0 W8_0 H4_0 ZI20">
+					<img src="LebensWerteBox.png" class="A W100_0 H100_0 ZI20"/>
+					<div id="AktuelleLebensPunkteAvatarContainer" class="A T0_0 L0_0 W50_0 H50_0 Crot ZI20 TXTC"></div>
+					<div id="UngefaehrAvatarLebensPunkteContainer" class="A T0_0 L50_0 W50_0 H50_0 Cgruen ZI20 TXTC"></div>
+				</div>
+				<img src="KampfFensterHintergrund.jpg" class="A T8_0 L25_0 W50_0 H4_0 ZI20"/>
+				<div id="KampfFensterGegnerName" class="A T8_0 L25_0 W50_0 H4_0 ZI20 FS120 TXTC" ></div>
+				<div id="KampfFensterGegnerKampfModus" class="A T12_0 L25_0 W50_0 H4_0 ZI20 TXTC"></div>
+				
+				<div id="WuerfelContainer" class="A T16_0 L10_0 W8_0 H6_0 ZI21">
+					<div id="WuerfelLinksContainer" class="A T0_0 L0_0 W50_0 H100_0 ZI21">
+						<img src="WuerfelLinks.png" class="A W100_0 H100_0 ZI21"/>
+						<img src="" id="WuerfelLinksAugenZahl" class="A W100_0 H100_0 ZI21"/>
+					</div>
+					<div id="WuerfelRechtsContainer" class="A T0_0 L50_0 W50_0 H100_0 ZI21">
+						<img src="WuerfelRechts.png" class="A W100_0 H100_0 ZI21"/>
+						<img src="" id="WuerfelRechtsAugenZahl" class="A W100_0 H100_0 ZI21"/>
+					</div>
+				</div>
+				<div id="WuerfelBecherContainer" class="A T4_0 L4_0 W18_0 H22_0 ZI22" onmousedown="Wuerfeln();">
+					<img src="WuerfelBecher.png" id="WuerfelBecher" class="A W100_0 H100_0 ZI22"/>
+				</div>
+				<div id="FernseherContainer" class="A T17_0 L35_0 W60_0 H40_0 ZI22">
+					<img id="MattscheibeGegnerBild" src="" class="A W100_0 H100_0 ZI22 DN"/>
+					<div id="MenuTaste1Container" class="A W100_0 H100_0 ZI22 DN green">
+						<p class="A T13_0 L13_0 W50_0 H10_0 ZI22 FS200">Angriff</p>
+						<div id="KampfFensterAvatarGrundwertAngriff" class="A T42_0 L25_0 W12_0 H12_0 ZI22 red"></div>
+						<div id="KampfFensterAvatarInitiativeBonusAngriff" class="A T42_0 L45_0 W12_0 H12_0 ZI22 red"></div>
+					</div>
+					<div id="MenuTaste2Container" class="A W100_0 H100_0 ZI22 DN red">
+						<p class="A T13_0 L13_0 W50_0 H10_0 ZI22 FS200">Verteidigung</p>
+						<div id="KampfFensterAvatarGrundwertVerteidigung" class="A T42_0 L25_0 W12_0 H12_0 ZI22 red"></div>
+						<div id="KampfFensterAvatarInitiativeBonusVerteidigung" class="A T42_0 L45_0 W12_0 H12_0 ZI22 red"></div>
+					</div>
+					<div id="MenuTaste3Container" class="A W100_0 H100_0 ZI22 DN orange">
+						<p class="A T13_0 L13_0 W50_0 H10_0 ZI22 FS200">TackTick</p>
+						<div id="KampfFensterAvatarGrundwertTackTick" class="A T42_0 L25_0 W12_0 H12_0 ZI22 red"></div>
+						<div id="KampfFensterAvatarInitiativeBonusTackTick" class="A T42_0 L45_0 W12_0 H12_0 ZI22 red"></div>
+					</div>
+					<div id="MenuTaste4Container" class="A W100_0 H100_0 ZI22 DN blue">
+						<p class="A T13_0 L13_0 W50_0 H10_0 ZI22 FS200">Geschwindigkeit</p>
+						<div id="KampfFensterAvatarGrundwertGeschwindigkeit" class="A T42_0 L25_0 W12_0 H12_0 ZI22 red"></div>
+						<div id="KampfFensterAvatarInitiativeBonusGeschwindigkeit" class="A T42_0 L45_0 W12_0 H12_0 ZI22 red"></div>
+					</div>
+					<div id="MenuTaste5Container" class="A W100_0 H100_0 ZI22 DN yellow">
+						<p class="A T13_0 L13_0 W50_0 H10_0 ZI22 FS200">Koerper</p>
+						<div id="KampfFensterAvatarGrundwertKoerper" class="A T42_0 L25_0 W12_0 H12_0 ZI22 red"></div>
+						<div id="KampfFensterAvatarInitiativeBonusKoerper" class="A T42_0 L45_0 W12_0 H12_0 ZI22 red"></div>
+					</div>
+					<img id="MattscheibenEbene" src="" class="A W100_0 H100_0 ZI20 red DN"/>
+					<img id="Mattscheibe" src="Aus.png" class="A W100_0 H100_0 ZI22"/>
+					<img src="FernseherVorderGrundgrund.png" class="A W100_0 H100_0 ZI22"/>
+				</div>
+				<div id="FernBedienungContainer" class="A T44_0 L8_0 W37_0 H50_0 ZI23">
+					<img id="FernBedienungBild" src="FernBedienung.png" class="A W100_0 H100_0 ZI20"/>
+					<!--<img id="FakeTastenBild" src="FakeTasten.png" class="A W100_0 H100_0 ZI20"/>-->
+					<img id="MenuTaste1Bild" src="MenuTaste1Aus.png" class="A T57_0 L49_0 W39_0 H13_0 ZI20" onmousedown="Fernbedienung(this,this.src,'MenuTaste',1)"/>
+					<img id="MenuTaste2Bild" src="MenuTaste2Aus.png" class="A T45_0 L50_0 W39_0 H13_0 ZI20" onmousedown="Fernbedienung(this,this.src,'MenuTaste',2)"/>
+					<img id="MenuTaste3Bild" src="MenuTaste3Aus.png" class="A T33_0 L52_0 W39_0 H13_0 ZI20" onmousedown="Fernbedienung(this,this.src,'MenuTaste',3)"/>
+					<img id="MenuTaste4Bild" src="MenuTaste4Aus.png" class="A T21_0 L54_0 W39_0 H13_0 ZI20" onmousedown="Fernbedienung(this,this.src,'MenuTaste',4)"/>
+					<img id="MenuTaste5Bild" src="MenuTaste5Aus.png" class="A T9_0 L55_0 W39_0 H13_0 ZI20" onmousedown="Fernbedienung(this,this.src,'MenuTaste',5)"/>
+
+					<img id="ZahlenTaste1Bild" src="ZahlenTaste1Aus.png" class="A T5_5 L6_5 W20_0 H17_0 ZI20" onmousedown="Fernbedienung(this,this.src,'ZahlenTaste',1)"/>
+					<img id="ZahlenTaste2Bild" src="ZahlenTaste2Aus.png" class="A T6_5 L21_3 W20_0 H17_0 ZI20" onmousedown="Fernbedienung(this,this.src,'ZahlenTaste',2)"/>
+					<img id="ZahlenTaste3Bild" src="ZahlenTaste3Aus.png" class="A T6_7 L36_0 W20_0 H17_0 ZI20" onmousedown="Fernbedienung(this,this.src,'ZahlenTaste',3)"/>
+					<img id="ZahlenTaste4Bild" src="ZahlenTaste4Aus.png" class="A T17_1 L6_0 W20_5 H17_0 ZI20" onmousedown="Fernbedienung(this,this.src,'ZahlenTaste',4)"/>
+					<img id="ZahlenTaste5Bild" src="ZahlenTaste5Aus.png" class="A T18_5 L20_0 W20_0 H17_0 ZI20" onmousedown="Fernbedienung(this,this.src,'ZahlenTaste',5)"/>
+					<img id="ZahlenTaste6Bild" src="ZahlenTaste6Aus.png" class="A T19_5 L35_0 W20_0 H17_0 ZI20" onmousedown="Fernbedienung(this,this.src,'ZahlenTaste',6)"/>
+					<img id="ZahlenTaste7Bild" src="ZahlenTaste7Aus.png" class="A T30_0 L4_0 W20_0 H17_0 ZI20" onmousedown="Fernbedienung(this,this.src,'ZahlenTaste',7)"/>
+					<img id="ZahlenTaste8Bild" src="ZahlenTaste8Aus.png" class="A T31_0 L19_0 W20_0 H17_0 ZI20" onmousedown="Fernbedienung(this,this.src,'ZahlenTaste',8)"/>
+					<img id="ZahlenTaste9Bild" src="ZahlenTaste9Aus.png" class="A T32_0 L34_0 W20_0 H17_0 ZI20" onmousedown="Fernbedienung(this,this.src,'ZahlenTaste',9)"/>
+					<img id="ZahlenTaste10Bild" src="ZahlenTaste10Aus.png" class="A T43_0 L2_7 W20_0 H17_0 ZI20" onmousedown="Fernbedienung(this,this.src,'ZahlenTaste',10)"/>
+					<img id="ZahlenTaste11Bild" src="ZahlenTaste11Aus.png" class="A T44_0 L17_3 W20_0 H17_0 ZI20" onmousedown="Fernbedienung(this,this.src,'ZahlenTaste',11)"/>
+					<img id="ZahlenTaste12Bild" src="ZahlenTaste12Aus.png" class="A T45_0 L32_3 W20_0 H17_0 ZI20" onmousedown="Fernbedienung(this,this.src,'ZahlenTaste',12)"/>
+				</div>
+			</div>
+		</div>
+
+		<div id="LogoContainer" class="A DN ZI22" style="Height:80px;width:80px;"><img class="A H100_0 W100_0" id="Logo" src="Logo.png"/></div>
+
+		<div id="Schaukasten" onmouseover="this.style.display='block'" class="A H30_0 W30_0 ZI19 OPA09 DN" onmouseout="this.style.display='none'" ondblclick="this.style.display='none'"><img src="SchaukastenWolke.png" class="A H100_0 W100_0 OPA09"/>
+			<img src="pergament.png" onmouseover="$('Schaukasten').style.display='block'" class="A W10_0 H10_0 L5_0 T10_0"/><input onmouseover="$('Schaukasten').style.display='block'" id="InventoryRuestungsWert" value="" class="A W10_0 H10_0 L5_0 TXTC BN T10_0 transparent"/>
+			<img src="pergament.png" onmouseover="$('Schaukasten').style.display='block'" class="A W10_0 H10_0 L5_0 T40_0"/><input onmouseover="$('Schaukasten').style.display='block'" id="InventoryAngriffsWert" value="" class="A W10_0 H10_0 L5_0 TXTC BN T40_0 transparent"/>
+			<img src="pergament.png" onmouseover="$('Schaukasten').style.display='block'" class="A W10_0 H10_0 L5_0 T70_0"/><input onmouseover="$('Schaukasten').style.display='block'" id="InventoryGesamtGewichtsWert" value="" class="A W10_0 H10_0 L5_0 TXTC BN T70_0 transparent"/>
+			<img src="pergamentDunkel.png" onmouseover="$('Schaukasten').style.display='block'" class="A W10_0 H10_0 L17_5 T10_0"/><input onmouseover="$('Schaukasten').style.display='block'" id="InventoryRuestungsWertWasHabIchAn" value="" class="A W10_0 H10_0 L17_5 TXTC BN T10_0 transparent"/>
+			<img src="pergamentDunkel.png" onmouseover="$('Schaukasten').style.display='block'" class="A W10_0 H10_0 L17_5 T40_0"/><input onmouseover="$('Schaukasten').style.display='block'" id="InventoryAngriffsWertWasHabIchAn" value="" class="A W10_0 H10_0 L17_5 TXTC BN T40_0 transparent"/>
+			<img src="pergamentDunkel.png" onmouseover="$('Schaukasten').style.display='block'" class="A W10_0 H10_0 L17_5 T70_0"/><input onmouseover="$('Schaukasten').style.display='block'" id="InventoryGesamtGewichtsWertWasHabIchAn" value="" class="A W10_0 H10_0 L17_5 TXTC BN T70_0 transparent"/>
+			<img src="pergament.png" onmouseover="$('Schaukasten').style.display='block'" class="A W10_0 H10_0 L30_0 T10_0"/><input onmouseover="$('Schaukasten').style.display='block'" id="InventoryNahrungsWert" value="" class="A W10_0 H10_0 L30_0 TXTC BN T10_0 transparent"/>
+			<img src="pergament.png" onmouseover="$('Schaukasten').style.display='block'" class="A W10_0 H10_0 L30_0 T40_0"/><input onmouseover="$('Schaukasten').style.display='block'" id="InventoryBlaBlaWert" value="" class="A W10_0 H10_0 L30_0 TXTC BN T40_0 transparent"/>
+			<img src="pergament.png" onmouseover="$('Schaukasten').style.display='block'" class="A W10_0 H10_0 L30_0 T70_0"/><input onmouseover="$('Schaukasten').style.display='block'" id="InventoryBlubbWert" value="" class="A W10_0 H10_0 L30_0 TXTC BN T70_0 transparent"/>
+			<img src="pergamentDunkel.png" onmouseover="$('Schaukasten').style.display='block'" class="A W10_0 H10_0 L42_5 T10_0"/><input onmouseover="$('Schaukasten').style.display='block'" id="InventoryNahrungsWertWasHabIchAn" value="" class="A W10_0 H10_0 L42_5 TXTC BN T10_0 transparent"/>
+			<img src="pergamentDunkel.png" onmouseover="$('Schaukasten').style.display='block'" class="A W10_0 H10_0 L42_5 T40_0"/><input onmouseover="$('Schaukasten').style.display='block'" id="InventoryBlaBlaWertWasHabIchAn" value="" class="A W10_0 H10_0 L42_5 TXTC BN T40_0 transparent"/>
+			<img src="pergamentDunkel.png" onmouseover="$('Schaukasten').style.display='block'" class="A W10_0 H10_0 L42_5 T70_0"/><input onmouseover="$('Schaukasten').style.display='block'" id="InventoryBlubbWertWasHabIchAn" value="" class="A W10_0 H10_0 L42_5 TXTC BN T70_0 transparent"/>
+			<img src="RuestungsBild.png" onmouseover="$('Schaukasten').style.display='block'" class="A W20_0 H20_0 L5_0 T20_0"/>
+			<img src="AngriffsBild.png" onmouseover="$('Schaukasten').style.display='block'" class="A W20_0 H20_0 L5_0 T50_0"/>
+			<img src="GewichtsBild.png" onmouseover="$('Schaukasten').style.display='block'" class="A W20_0 H20_0 L5_0 T80_0"/>
+			<div id="DiesenGegenstandAnlegenButton" class="A W10_0 H35_0 L58_0 T30_0"><img src="GegenstaendeTauschen.png" onmousedown="DiesenGegenstandAnlegenButton(),$('Schaukasten').style.display='none'" onmouseover="$('Schaukasten').style.display='block'" class="A W100_0 H100_0 L0_0 T0_0"/></div>
+			<img src="pergament.png" class="A W25_0 H5_0 L70_0 T5_0"/><div id="SchaukastenBildBildName" class="A W25_0 H5_0 L73_0 T5_0 FS80"></div>
+			<div id="SchaukastenBild" class="A W25_0 H35_0 L70_0 T10_0"><img src="pergament.png" onmouseover="$('Schaukasten').style.display='block'" class="A W100_0 H100_0 L5_0 T0_0"/><img id="SchaukastenBildBild" src="" onmouseover="$('Schaukasten').style.display='block'" class="A W100_0 H100_0 L5_0 T0_0"/></div>
+			<img src="pergament.png" class="A W25_0 H5_0 L70_0 T50_0"/><div id="SchaukastenBildWasHabIchAnBildName" class="A W25_0 H5_0 L73_0 T50_0 FS80"></div>
+			<div id="SchaukastenBildWasHabIchAn" class="A W25_0 H35_0 L70_0 T55_0"><img src="pergamentDunkel.png" onmouseover="$('Schaukasten').style.display='block'" class="A W100_0 H100_0 L5_0 T0_0"/><img id="SchaukastenBildWasHabIchAnBild" src="" onmouseover="$('Schaukasten').style.display='block'" class="A W100_0 H100_0 L5_0 T0_0"/></div>
+		</div>
+
+		<div id="FadenKreuz" style="position:absolute;display:none;left:0; top:20; width:40; height:40; z-index:4;">
+			<img src="FadenKreuz.png" width="40" height="40">
+		</div>
+		<div id="JointLicht" class="A DN ZI18"><img class="A H100_0 W100_0" id="Logo" src="JointLicht.png"/></div>
+				<object id="Tune" style="display:none;visibility:hidden;">
+					<param name="musik" value="Tune/dayam.swf">
+					<embed src="Tune/dayam.swf" width="0" height="0"></embed>
+				</object>
+				<script type="text/javascript">
+					function Tune(Welchersound){
+						if($(Welchersound).style.display=='none'){
+							$(Welchersound).style.display='block';
+						}else{
+							$(Welchersound).style.display='none';
+						}
+					}
+				</script>
+	</body>
+</html>

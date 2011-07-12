@@ -1,0 +1,168 @@
+<html>
+	<head>
+		<title>Coerling2</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="Css.css"/>
+		<style>
+			body{
+				overflow:hidden;
+			}
+			.Coerler{
+				position:absolute;
+				left:4%;
+				top:40%;
+				height:40px;
+				width:40px;
+				z-index:2;
+			}
+			.Zielscheibe{
+				position:absolute;
+				left:70%;
+				top:35%;
+				height:15%;
+				width:20%;
+				z-index:1;
+			}
+			.Welt{
+				position:absolute;
+				left:0;
+				top:0;
+				height:100%;
+				width:10%;
+			}
+			.NeuenCoerlerSetzen{
+				position:absolute;
+				left:0;
+				top:0;
+				height:10%;
+				width:10%;
+				z-index:10;
+			}
+			.WurfBereichsSperre{
+				position:absolute;
+				top:0;
+				left:10%;
+				height:100%;
+				width:5%;
+				z-index:10;
+			}
+			.WurfBereichsSperreAusgabe{
+				position:absolute;
+				top:0;
+				left:15%;
+				height:100%;
+				width:20%;
+				z-index:10;
+			}
+		</style>
+		<script type="text/javascript">
+		//.Tiny
+			$=function(id){return(document.getElementById(id));};
+
+			speed=0;
+			CoerlerAngelegt=false;
+			Dragbarkeit=false;
+			dragobjekt=null;
+			var dragx=0;
+			var dragy=0;
+			var posxx=0;
+			var posyy=0;
+
+		//Wird aufgerufen, wenn ein Objekt bewegt werden soll.
+			dragstart=function(element){
+				if(Dragbarkeit==true){
+					dragobjekt=element;
+					element.style.left=posxx-20;
+					element.style.top=posyy-20;
+					dragx=posxx-dragobjekt.offsetLeft;
+					dragy=posyy-dragobjekt.offsetTop;
+				}
+			}
+
+		//Wird aufgerufen, wenn ein Objekt nicht mehr bewegt werden soll.
+			dragstop=function(){
+				WasWardragobjekt=dragobjekt;
+				dragobjekt=null;
+			}
+
+			drag=function(ereignis2){
+				posxx=document.all?window.event.clientX:ereignis2.pageX;
+				posyy=document.all?window.event.clientY:ereignis2.pageY;
+				if(dragobjekt != null){
+					dragobjekt.style.left=(posxx-dragx)+"px";
+					dragobjekt.style.top=(posyy-dragy)+"px";
+				}
+			}
+
+			MouseUp=function(Ereignis){
+				MausX=Ereignis.clientX-$('Welt').offsetLeft;
+				MausY=Ereignis.clientY-$('Welt').offsetTop;
+				dragstop();
+			}
+
+			document.onmouseup=MouseUp;
+
+			draginit=function(){
+				document.onmousemove=drag;
+			}
+
+			derCounter=0;
+			derBewegungsCounter=0;
+
+			Zaehl=function(){
+				derCounter++;
+			}
+
+			BewegDenCoerler=function(){
+				speed--;
+				if(speed>0){
+					$('Coerler').style.left=$('Coerler').offsetLeft+CoerlerVerschiebungLeft;
+					$('Coerler').style.top=$('Coerler').offsetTop-CoerlerVerschiebungTop;
+				}
+				derBewegungsCounter--;
+				if(speed>0){
+					setTimeout('BewegDenCoerler()',500/speed);
+				}
+			}
+			StartCounter=function(){
+				if(CoerlerAngelegt==true){
+					CounterInterval=setInterval('Zaehl()',10);
+					WoIstDerCoerlerEingetroffenLeft=posyy;
+				}
+			}
+			ZeigCounter=function(){
+				if(CoerlerAngelegt==true){
+					clearInterval(CounterInterval);
+					CoerlerAngelegt=false;
+					WoIstDerCoerlerAusgetretenLeft=posyy;
+					CoerlerVerschiebungLeft=$('WurfBereichsSperre').offsetWidth/2;//(WoIstDerCoerlerEingetroffenLeft-WoIstDerCoerlerAusgetretenLeft)/2
+					CoerlerVerschiebungTop=(WoIstDerCoerlerEingetroffenLeft-WoIstDerCoerlerAusgetretenLeft)/2;//$('WurfBereichsSperre').offsetHeight/2
+					//alert(derCounter);
+					//alert(WoIstDerCoerlerEingetroffenLeft-WoIstDerCoerlerAusgetretenLeft);
+					derBewegungsCounter=derCounter;
+					speed=40-derBewegungsCounter;
+					if(speed<=0){
+						speed=0;
+					}
+					derCounter=0;
+					BewegDenCoerler();
+				}
+			}
+			NeuenCoerlerSetzen=function(){
+				$('Coerler').style.left=4+'%';
+				$('Coerler').style.top=40+'%';
+			}
+		</script>
+	</head>
+	<body onload="draginit()"><img id="EisHintergrund" class="A H100_0 W100_0" src=EisHintergrund.png />
+		<div id="WurfBereichsSperreAusgabe" onmouseover="ZeigCounter()" class="WurfBereichsSperreAusgabe"></div>
+		<div id="WurfBereichsSperre" onmouseover="dragstop(),Dragbarkeit=false,StartCounter()" class="WurfBereichsSperre"><img class="A H100_0 W100_0" src=Stehflaeche2.png /></div>
+		<div id="Welt" onmouseover="dragstart($('Coerler')),Dragbarkeit=true" onmouseout="dragstop(),Dragbarkeit=false"class="Welt"><img class="A H100_0 W100_0" src=Stehflaeche2.png /></div>
+		<div id="Coerler" class="Coerler" onmousemove="dragstart($('Coerler')),Dragbarkeit=true,CoerlerAngelegt=true;" onmouseover="dragstart($('Coerler')),Dragbarkeit=true,CoerlerAngelegt=true;">
+			<img id="CoerlerBild" src=Coerler.png />
+		</div>
+		<div id="Zielscheibecontainer" class="Zielscheibe">
+			<img id="Zielscheibe" src=Zielscheibe.png />
+		</div>
+		<div id="NeuenCoerlerSetzen" onmousedown="NeuenCoerlerSetzen()" class="NeuenCoerlerSetzen"><img id="NeuenCoerlerSetzenBild" class="A H100_0 W100_0" src=NeuenCoerlerSetzen.png /></div>
+	</body>
+</html>

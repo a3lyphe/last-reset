@@ -1,0 +1,32 @@
+
+Auto:
+	S	-	In Auto einsteigen
+
+Schießen:
+	Mit der Maus zielen und die Taste A gedrückt halten (Die Spannung|Distanz erhöht sich mit der Zeit)
+
+Bewegen:
+	Mit der Maus Ziel anklicken; Figur|Auto bewegt sich dorthin
+
+KartenFenster:
+	Die Orientierung der Karte und der umliegenden Fenster (Fenstermodus) ist mit:
+		J (nach links ausrichten)
+		K (zentriert)
+		L (nach rechts ausrichten)
+	steuerbar.
+
+Fußball:
+	Der Fußball wird durch Berührung mit der Figur|Auto geschossen, der Winkel des Auftreffens ist entscheidend für die Flugbahn.
+	D	- Schußtaste
+	
+	Bei Treffer wird der ZielCursor blau
+	Bei Niete rot
+
+Aufsammeln:
+	Übergehen|-fahren des zu sammelnden Gegenstandes
+	bzw. Heranfahren bei erntbaren Dingen, bei weiterem Klick öffnet sich ein PopUp und man kann entweder das PopUp schließen oder den Gegenstand aufsammeln durch Klick auf das Hand-Symbol.
+
+Kartenbereich verlassen zum nächsten
+	heranfahren an den Rand und Leertaste|irgendeine TAste drücken zum wechseln
+
+

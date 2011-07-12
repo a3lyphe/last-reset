@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<title>fabis seIETE</title>
+	</head>
+	<script type="text/javascript">
+			draginit=function(){
+				document.onmousemove=drag;
+			}
+			function drag(ereignis2){
+				posxx=document.all?window.event.clientX:ereignis2.pageX;
+				posyy=document.all?window.event.clientY:ereignis2.pageY;
+				if(dragobjekt != null){
+					dragobjekt.style.left=(posxx-dragx)+"px";
+					dragobjekt.style.top=(posyy-dragy)+"px";
+				}
+			}
+	</script>
+	<body>
+		alert('a   b   c')
+
+	</body>
+</html>

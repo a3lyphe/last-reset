@@ -1,0 +1,1620 @@
+<html>
+	<head>
+		<title>Ebenen-Generator</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="Css.css"/>
+		<script type="text/javascript" src="AvatarBewegung.js"></script>
+		<script type="text/javascript" src="Arrays.js"></script>
+		<script type="text/javascript">
+			GibtEsDieKarte=false;
+			JaEsGibtSieUndZwarNR=0;
+			NeueKarte='';
+			AktuelleZahl='';
+			AktuellerBuchstabe='';
+			RandUnten='';
+			RandRechts='';
+		//.Tiny
+			$=function(id){return(document.getElementById(id));};
+
+		//Initialisierung der Moeglichkeit des Spielers
+			Mensch=function(){
+				this.Waren=function(){
+					this.Holz;
+					this.Steine;
+				}
+			}
+
+		//Initialisierung des Spielers
+			Player=new Mensch;
+			Player.Waren.Holz=0;
+			Player.Waren.Steine=0;
+
+		//Horizontale RasterEinheiten
+			SpaltenAnzahl=10;
+
+		//Verticale RasterEinheiten
+			ReihenAnzahl=10;
+
+		//GrundVariablen
+			LeftVary=0;
+			TopVary=0;
+
+		//BerechnungsVaries
+			SpaltenVariable=(100/SpaltenAnzahl).toFixed(1);
+			ReihenVariable=(100/ReihenAnzahl).toFixed(1);
+
+		//Follkommen Hirni: *1 muss dasein damit ich eine Nachkommastelle bekomme...
+			SpaltenVariableB=(SpaltenVariable*1).toFixed(1);
+			ReihenVariableB=(ReihenVariable*1).toFixed(1);
+
+		//GrundVariablen
+			WidthVary='H'+(ReihenVariable*1).toFixed(0)+'_'+ReihenVariable[ReihenVariable.length-1];
+			HeightVary='W'+(SpaltenVariable*1).toFixed(0)+'_'+SpaltenVariable[SpaltenVariable.length-1];
+
+			for(all in KartenArray){
+				eval('BGMaterial'+KartenArray[all]+"='"+BGMaterieArray[all]+"'");
+			}
+
+		//Initialisierung der Karten-Ebenen-Teil-Nummern
+			for(all in KartenArray){
+				for(each in EbenenArray){
+				eval(EbenenArray[each]+KartenArray[all]+"='';");
+				}
+			}
+
+		//GrundVariable fuer das zu erfarmende Objekt
+			FarmObjekt='';
+
+		//GrundVariablen
+			SteineGeschwindigkeit=3000;
+			HolzGeschwindigkeit=1000;
+			SteineLaueft=false;
+			HolzLaueft=false;
+			SteineKonsti=5;
+			HolzKonsti=5;
+
+		//BaumRate von 0-1.
+			BaumRate=.5;
+
+		//BuschRate von 0-1.
+			BuschRate=.5;
+
+		//0=kein Baum,1=Baum
+			BaumArray=new Array(SpaltenAnzahl);
+			for(x=0;x<SpaltenAnzahl;x++){
+				BaumArray[x]=new Array(ReihenAnzahl);
+				for(y=0;y<ReihenAnzahl;y++){
+					BaumArray[x][y]=0;
+				}
+			}
+
+		//0=kein Busch,1=Busch
+			BuschArray=new Array(SpaltenAnzahl);
+			for(x=0;x<SpaltenAnzahl;x++){
+				BuschArray[x]=new Array(ReihenAnzahl);
+				for(y=0;y<ReihenAnzahl;y++){
+					BuschArray[x][y]=0;
+				}
+			}
+
+		//Initialisierung der RandArray¥s
+			for(all in KartenArray){
+				for(each in EbenenArray){
+					eval(EbenenArray[each]+KartenArray[all]+'RandX=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];');
+					eval(EbenenArray[each]+KartenArray[all]+'RandY=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];');
+				}
+			}
+
+		//Initialisierung der Karten-Schon_Geladen-Varrie¥s
+			for(all in KartenArray){
+				eval(KartenArray[all]+'Geladen=false');
+			}
+
+		//Alle SpeicherArray¥s
+			AlleBaumSpeicherArrays=['BaumSpeicherArray','BaumIDSpeicherArray','BaumZFVarySpeicherArray','FogOfWar'];
+
+		//Alle SpeicherArray¥s
+			AlleBuschSpeicherArrays=['BuschSpeicherArray','BuschIDSpeicherArray','BuschZFVarySpeicherArray','FogOfWar'];
+
+		//Initialisierung der BaumSpeicher-Array¥s
+			for(each in AlleBaumSpeicherArrays){
+				for(all in KartenArray){
+					eval(AlleBaumSpeicherArrays[each]+KartenArray[all]+'=new Array(SpaltenAnzahl);');
+				}
+				for(all in KartenArray){
+					for(x=0;x<SpaltenAnzahl;x++){
+						eval(AlleBaumSpeicherArrays[each]+KartenArray[all]+'[x]=new Array(ReihenAnzahl);');
+						for(y=0;y<ReihenAnzahl;y++){
+							eval(AlleBaumSpeicherArrays[each]+KartenArray[all]+'[x][y]=0;');
+						}
+					}
+				}
+			}
+
+		//Initialisierung der BuschSpeicher-Array¥s
+			for(each in AlleBuschSpeicherArrays){
+				for(all in KartenArray){
+					eval(AlleBuschSpeicherArrays[each]+KartenArray[all]+'=new Array(SpaltenAnzahl);');
+				}
+				for(all in KartenArray){
+					for(x=0;x<SpaltenAnzahl;x++){
+						eval(AlleBuschSpeicherArrays[each]+KartenArray[all]+'[x]=new Array(ReihenAnzahl);');
+						for(y=0;y<ReihenAnzahl;y++){
+							eval(AlleBuschSpeicherArrays[each]+KartenArray[all]+'[x][y]=0;');
+						}
+					}
+				}
+			}
+
+		//Die RandArrays fuer die Positionen die nicht im SpeicherArray liegen.
+			ErsteEbeneKarteA0RandX=[2,1,2,3,1,0,2,3,1,2,3,3,1,0,2,3,1,2,3,3,1,2,3,1,0,2,3,1,2,3,3,1,0,2,3,1,2,3,3,1];
+			ErsteEbeneKarteA0RandY=[8,4,8,12,4,0,8,12,4,8,12,12,4,0,8,12,4,8,12,12,4,8,12,4,0,8,12,4,8,12,12,4,0,8,12,4,8,12,12,4];
+			ZweiteEbeneKarteA0RandX=[0,2,3,3,3,1,2,3,3,1,2,3,3,1,2,3,3,1,2,3,3,3,3,1,2,3,3,1,2,3,3,1,2,3,3,1,2,3,1,2];
+			ZweiteEbeneKarteA0RandY=[0,8,12,12,12,4,8,12,12,4,8,12,12,4,8,12,12,4,8,12,12,12,12,4,8,12,12,4,8,12,12,4,8,12,12,4,8,12,4,8];
+			DritteEbeneKarteA0RandX=[0,2,1,0,0,2,3,3,1,2,3,3,3,1,2,3,3,1,2,3,1,0,0,2,3,3,1,2,3,3,3,1,2,3,3,1,2,3,3,3];
+			DritteEbeneKarteA0RandY=[0,8,4,0,0,8,12,12,4,8,12,12,12,4,8,12,12,4,8,12,4,0,0,8,12,12,4,8,12,12,12,4,8,12,12,4,8,12,12,12];
+			VierteEbeneKarteA0RandX=[0,2,1,0,0,2,3,3,1,2,3,3,3,1,2,3,3,1,2,3,1,0,0,2,3,3,1,2,3,3,3,1,2,3,3,1,2,3,3,3];
+			VierteEbeneKarteA0RandY=[0,8,4,0,0,8,12,12,4,8,12,12,12,4,8,12,12,4,8,12,4,0,0,8,12,12,4,8,12,12,12,4,8,12,12,4,8,12,12,12];
+			FuenfteEbeneKarteA0RandX=[0,2,1,0,0,2,3,3,1,2,3,3,3,1,2,3,3,1,2,3,1,0,0,2,3,3,1,2,3,3,3,1,2,3,3,1,2,3,3,3];
+			FuenfteEbeneKarteA0RandY=[0,8,4,0,0,8,12,12,4,8,12,12,12,4,8,12,12,4,8,12,4,0,0,8,12,12,4,8,12,12,12,4,8,12,12,4,8,12,12,12];
+			SechsteEbeneKarteA0RandX=[0,2,1,0,0,2,3,3,1,2,3,3,3,1,2,3,3,1,2,3,1,0,0,2,3,3,1,2,3,3,3,1,2,3,3,1,2,3,3,3];
+			SechsteEbeneKarteA0RandY=[0,8,4,0,0,8,12,12,4,8,12,12,12,4,8,12,12,4,8,12,4,0,0,8,12,12,4,8,12,12,12,4,8,12,12,4,8,12,12,12];
+
+		//Damit der Avatar nur einmal in der Init geladen wird
+			AvatarSkaliert=false;
+
+		//Damit der Rand nur einmal in der Init geladen wird
+			RandSkaliert=false;
+
+			wer='';
+
+		//Initialisierung der Ebenen
+			for(Ebene in EbenenArray){
+				wer=EbenenArray[Ebene];
+
+			//BerechnungsWert fuer Bereiche Ausserhalb der SpeicherArrays
+				eval(wer+'AbfrageY=0;');
+				eval(wer+'AbfrageX=0;');
+
+			//Ebenen-Produktions-Schalter
+				eval(wer+'Erweiterung=true;');
+
+			//Initialisierung der EbenenHTML-Vary.
+				eval("die"+wer+"HTML='';");
+
+			//Teile-Nummer-Array speichert welche Teile wo gesetzt wurden, damit die Karte nurnoch Wiedergebaut werden muss.
+				for(all in KartenArray){
+					eval(wer+'TeileNummerArray'+KartenArray[all]+'=new Array(SpaltenAnzahl);');
+					for(x=0;x<SpaltenAnzahl;x++){
+						eval(wer+'TeileNummerArray'+KartenArray[all]+'[x]=new Array(ReihenAnzahl);');
+						for(y=0;y<ReihenAnzahl;y++){
+							eval(wer+'TeileNummerArray'+KartenArray[all]+'[x][y]=0;');
+						}
+					}
+				}
+
+			//Woraus beteht die Ebene
+				Materie=EbenenMaterieArray[Ebene];
+				for(all in KonstantenNRArray){
+					eval(wer+KonstantenNRArray[all]+'='+"[[Materie+BildA[all]],[Materie+BildB[all]]]");
+					eval(wer+'XWert'+KonstantenNRArray[all]+'=[['+FlaecheAXWert[all]+'],['+FlaecheBXWert[all]+']]');
+					eval(wer+'YWert'+KonstantenNRArray[all]+'=[['+FlaecheAYWert[all]+'],['+FlaecheBYWert[all]+']]');
+				}
+
+			//Initialisierung der Speicher-Array¥s
+				eval(wer+'XWerteArray=new Array(SpaltenAnzahl);');
+				eval(wer+'YWerteArray=new Array(SpaltenAnzahl);');
+				for(x=0;x<SpaltenAnzahl;x++){
+					eval(wer+'XWerteArray[x]=new Array(ReihenAnzahl);');
+					eval(wer+'YWerteArray[x]=new Array(ReihenAnzahl);');
+					for(y=0;y<ReihenAnzahl;y++){
+						eval(wer+'XWerteArray[x][y]=0;');
+						eval(wer+'YWerteArray[x][y]=0;');
+					}
+				}
+
+			//Initialisierung der Ebenen-Konstanten
+				for(all in KonstantenNRArray){
+					eval(wer+'Konstante'+KonstantenNRArray[all]+'='+eval(wer+'KonstantenArray')[all]+';');
+				}
+
+			//GrundVariablen fuer die Aenderungen der EbenenTeile
+				eval(wer+'TeilCounter=0;');
+
+			//Alle EbenenRandArrays werden Initialisiert
+				eval(wer+'RandUntenArray=[]');
+				eval(wer+'RandRechtsArray=[]');
+
+			//Vorzeitige MueschMaschiene. Faellt weg wenn der Fake-Zufall-Array-Scheiﬂ eingebaut ist.
+				for(all in KonstantenNRArray){
+					eval(wer+'TeilCounterArray[all]=parseInt(Math.random()+.5);');
+				}
+			}
+
+		//BauJetzt-Function
+			EbenenEinfuegung=function(pufferNR){
+				for(all in EbenenArray){
+					$('the'+EbenenArray[all]+'HTML').innerHTML=eval(EbenenArray[all]+pufferNR);
+					$('the'+EbenenArray[all]+'HTML').style.position='absolute';
+					$('the'+EbenenArray[all]+'HTML').style.left=EbenenVaryLeft;
+					$('the'+EbenenArray[all]+'HTML').style.top=EbenenVaryTop;
+					$('the'+EbenenArray[all]+'HTML').style.width=EbenenVaryWidth;
+					$('the'+EbenenArray[all]+'HTML').style.height=EbenenVaryHeight;
+				}
+			}
+
+		//BauJetzt-Function
+			EbenenLoeschen=function(){
+				for(all in EbenenArray){
+					eval("die"+EbenenArray[all]+"HTML=''");
+				}
+				dieBGHTML='';
+				dieBaeumeHTML='';
+				dieBuescheHTML='';
+			}
+
+		//BauJetzt-Function
+			EbenenPositionErmittlung=function(x,y,Verschiebung){
+
+				VerschiebungPufferVary=Verschiebung;
+				VaryBlaY=ReihenVariableB*y+VerschiebungPufferVary;
+				VaryBlaX=SpaltenVariableB*x+VerschiebungPufferVary;
+
+				if(VaryBlaY.toString().length>4)		{VaryBlaY=VaryBlaY.toFixed(1)}
+				if(VaryBlaY.toString()>=100)			{TopVary='T100_0'}else
+				if(VaryBlaY.toString()<0)				{TopVary='T0_0'}else
+				switch(VaryBlaY.toString().length){
+					case 1:
+						TopVary='T'+VaryBlaY.toString()[0]+'_0';
+					break;
+					case 2:
+						TopVary='T'+VaryBlaY.toString()[0]+VaryBlaY.toString()[1]+'_0';
+					break;
+					case 3:
+						TopVary='T'+VaryBlaY.toString()[0]+'_'+VaryBlaY.toString()[2];
+					break;
+					case 4:
+						TopVary='T'+VaryBlaY.toString()[0]+VaryBlaY.toString()[1]+'_'+VaryBlaY.toString()[3];
+					break;
+				}
+
+				if(VaryBlaX.toString().length>4)		{VaryBlaX=VaryBlaX.toFixed(1)}
+				if(VaryBlaX.toString()>=100)			{LeftVary='L100_0'}else
+				if(VaryBlaX.toString()<0)				{LeftVary='L0_0'}else
+				switch(VaryBlaX.toString().length){
+					case 1:
+						LeftVary='L'+VaryBlaX.toString()[0]+'_0';
+					break;
+					case 2:
+						LeftVary='L'+VaryBlaX.toString()[0]+VaryBlaX.toString()[1]+'_0';
+					break;
+					case 3:
+						LeftVary='L'+VaryBlaX.toString()[0]+'_'+VaryBlaX.toString()[2];
+					break;
+					case 4:
+						LeftVary='L'+VaryBlaX.toString()[0]+VaryBlaX.toString()[1]+'_'+VaryBlaX.toString()[3];
+					break;
+				}
+
+				YYY=TopVary;
+				XXX=LeftVary;
+			}
+
+		//Hintergrund-Counter
+			BGCounter=0;
+
+		//Bisher Gibt es 9 verschiedene BodenVarianten...Mehr davon..!
+			BGStueckeVarianten=9;
+
+		//Initialisierung der BGGrundFlaeche
+			dieBGHTML='';
+			BGStueckeVary=0;
+
+		//Fuellung der BGHTML-Vary
+			HinterGrundErstellung=function(puffer){
+				for(x=0;x<SpaltenAnzahl;x++){
+					for(y=0;y<ReihenAnzahl;y++){
+						BGStueckeVary=BGCounter;
+						BGCounter++;
+						if(BGCounter>BGStueckeVarianten-1){BGCounter=0;}
+						EbenenPositionErmittlung(x,y,0);
+						dieBGHTML+='<img src="'+eval('BGMaterial'+puffer)+BGStueckeVary+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+					}
+				}
+			}
+
+		//GrundVariable fuer die Erstellung der Baum-ID¥s
+			BaumIDCounter=0;
+
+		//GrundVariable fuer die Aenderungen der Baeume
+			BaumCounter=0;
+
+		//Variationen der Baeume
+			BaumArrayB=[4,13,3,12,3,6,2,0,4,1,2,13,1,3,8,9,4,3,5,11,10,4,8,2,1,11,12,6,6,10,5,6,1,9,4,7,0,4,13,11,3,4,9,6,7,10,2,5,3,6,11,7,5,8,9,4,1,5,9,8,7,6,3,2,5,6,9,8,7,1,11,10,8,7,6,9,5,8,2,1,2,5,8,4,4,3,3,5,3,6,2,0,4,1,2,7,1,3,8,9,4,3,5,11,10,4,8,2,1,11,2,6,6,10,5,6,1,9,4,7,0,4,6,11,3,4,9,6,7,10,2,5,3,6,11,7,5,8,9,4,1,5,9,8,7,6,3,2,5,6,9,8,7,1,11,10,8,7,6,9,5,8,2,1,2,5,8,4,4,3,3,5,3,6,2,0,4,1,2,7,1,3,8,9,4,3,5,11,10,4,8,2,1,11,2,6,6,10,5,6,1,9,4,7,0,4,6,11,3,4,9,6,7,10,2,5,3,6,11,7,5,8,9,4,1,5,9,8,7,6,3,2,5,6,9,8,7,1,11,10,8,7,6,9,5,8,2,1,2,5,8,4,4,3,3,5,3,6,2,0,4,1,2,7,1,3,8,9,4,3,5,11,10,4,8,2,1,11,2,6,6,10,5,6,1,9,4,7,0,4,6,11,3,4,9,6,7,10,2,5,3,6,11,7,5,8,9,4,1,5,9,8,7,6,3,2,5,6,9,8,7,1,11,10,8,7,6,9,5,8,2,1,2,5,8,4,4];
+
+		//Vorzeitige MueschMaschiene. Faellt weg wenn der Fake-Zufall-Array-Scheiﬂ eingebaut ist.
+			//for(all in BaumArrayB){
+			//	BaumArrayB[all]=parseInt(Math.random()*14);//12 Variationen bisjetzt...Mehr davon!
+			//}
+
+		//GrundVariable fuer die Erstellung der Busch-ID¥s
+			BuschIDCounter=0;
+
+		//GrundVariable fuer die Aenderungen der Buesche
+			BuschCounter=0;
+
+		//Variationen der Buesche
+			BuschArrayB=[4,13,3,12,3,6,2,0,4,1,2,13,1,3,8,9,4,3,5,11,10,4,8,2,1,11,12,6,6,10,5,6,1,9,4,7,0,4,13,11,3,4,9,6,7,10,2,5,3,6,11,7,5,8,9,4,1,5,9,8,7,6,3,2,5,6,9,8,7,1,11,10,8,7,6,9,5,8,2,1,2,5,8,4,4,3,3,5,3,6,2,0,4,1,2,7,1,3,8,9,4,3,5,11,10,4,8,2,1,11,2,6,6,10,5,6,1,9,4,7,0,4,6,11,3,4,9,6,7,10,2,5,3,6,11,7,5,8,9,4,1,5,9,8,7,6,3,2,5,6,9,8,7,1,11,10,8,7,6,9,5,8,2,1,2,5,8,4,4,3,3,5,3,6,2,0,4,1,2,7,1,3,8,9,4,3,5,11,10,4,8,2,1,11,2,6,6,10,5,6,1,9,4,7,0,4,6,11,3,4,9,6,7,10,2,5,3,6,11,7,5,8,9,4,1,5,9,8,7,6,3,2,5,6,9,8,7,1,11,10,8,7,6,9,5,8,2,1,2,5,8,4,4,3,3,5,3,6,2,0,4,1,2,7,1,3,8,9,4,3,5,11,10,4,8,2,1,11,2,6,6,10,5,6,1,9,4,7,0,4,6,11,3,4,9,6,7,10,2,5,3,6,11,7,5,8,9,4,1,5,9,8,7,6,3,2,5,6,9,8,7,1,11,10,8,7,6,9,5,8,2,1,2,5,8,4,4];
+
+		//Vorzeitige MueschMaschiene. Faellt weg wenn der Fake-Zufall-Array-Scheiﬂ eingebaut ist.
+			for(all in BuschArrayB){
+				BuschArrayB[all]=parseInt(Math.random()*21);//12 Variationen bisjetzt...Mehr davon!
+			}
+
+		//Initialisierung der Baeume
+			dieBaeumeHTML='';
+			dieBuescheHTML='';
+			BaumKonstantenVary=0;
+			BuschKonstantenVary=0;
+			BaumIDVary='';
+			BuschIDVary='';
+			BaumZFVary=0;
+			BuschZFVary=0;
+
+			BaumSchleife=function(puffer){
+			//Fuellung der BaeumeHTML-Vary
+				for(x=0;x<SpaltenAnzahl;x++){
+					for(y=0;y<ReihenAnzahl;y++){
+						BaumKonstantenVary=BaumArray[x][y];
+						if(BaumCounter>BaumArrayB.length){
+							BaumCounter=0;
+							BaumArrayB.reverse;
+						}
+						vary='x';
+						if(BaumKonstantenVary==1){
+							vary=BaumArrayB[BaumCounter];
+							BaumIDCounter++;
+
+							BaumIDVary='Baum'+BaumIDCounter;
+							eval('BaumIDSpeicherArray'+puffer)[x][y]=BaumIDVary;
+							BaumZFVary=parseInt(Math.random()*4.3-parseInt(Math.random()*4.3));
+							eval('BaumZFVarySpeicherArray'+puffer)[x][y]=BaumZFVary;
+
+							EbenenPositionErmittlung(x,y,BaumZFVary);
+
+							dieBaeumeHTML+='<img id="'+BaumIDVary+'" onmouseover="ChangeImage(this,'+vary+')" onmouseout="ChangeImageBack(this,'+vary+')" onmouseup="Farmen(this,\'Holz\')" src="Baum/Tanne'+vary+'.png" class="A ZI8 '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+						}
+						BaumCounter++;
+						eval('BaumSpeicherArray'+puffer)[x][y]=vary;
+					}
+				}
+			}
+
+			BuschSchleife=function(puffer){
+			//Fuellung der BuescheHTML-Vary
+				for(x=0;x<SpaltenAnzahl;x++){
+					for(y=0;y<ReihenAnzahl;y++){
+						BuschKonstantenVary=BuschArray[x][y];
+						if(BuschCounter>BuschArrayB.length){
+							BuschCounter=0;
+							BuschArrayB.reverse;
+						}
+						vary='x';
+						if(BuschKonstantenVary==1){
+							vary=BuschArrayB[BuschCounter];
+							BuschIDCounter++;
+
+							BuschIDVary='Busch'+BuschIDCounter;
+							eval('BuschIDSpeicherArray'+puffer)[x][y]=BuschIDVary;
+							BuschZFVary=parseInt(Math.random()*4.3-parseInt(Math.random()*4.3));
+							eval('BuschZFVarySpeicherArray'+puffer)[x][y]=BuschZFVary;
+
+							EbenenPositionErmittlung(x,y,BuschZFVary);
+
+							dieBuescheHTML+='<img id="'+BuschIDVary+'" onmouseover="ChangeImage(this,'+vary+')" onmouseout="ChangeImageBack(this,'+vary+')" onmouseup="Farmen(this,\'Holz\')" src="Busch/Busch'+vary+'.png" class="A ZI8 '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+						}
+						BuschCounter++;
+						eval('BuschSpeicherArray'+puffer)[x][y]=vary;
+					}
+				}
+			}
+
+			RandUnten=0;
+			RandRechts=0;
+
+			EbenenSchleife=function(puffer){
+				vary=eval('ErsteEbene'+puffer+'RandX');
+				if(vary[0]+vary[1]+vary[2]+vary[3]+vary[4]+vary[5]+vary[6]+vary[7]+vary[8]+vary[9]+vary[10]+vary[11]+vary[12]+vary[13]+vary[14]==0){
+					for(each in EbenenArray){
+						for(all in eval(EbenenArray[each]+puffer+'RandY')){
+							vary=eval(EbenenArray[each]+puffer+'RandY')[all];
+							switch(vary){
+								case 0:
+									UebertragungsVary=0;
+								break;
+								case 4:
+									UebertragungsVary=1;
+								break;
+								case 8:
+									UebertragungsVary=2;
+								break;
+								case 12:
+									UebertragungsVary=3;
+								break;
+							}
+							eval(EbenenArray[each]+puffer+'RandX')[all]=UebertragungsVary;
+						}
+					}
+				}
+				else{
+					vary=eval('ErsteEbene'+puffer+'RandY');
+					if(vary[0]+vary[1]+vary[2]+vary[3]+vary[4]+vary[5]+vary[6]+vary[7]+vary[8]+vary[9]+vary[10]+vary[11]+vary[12]+vary[13]+vary[14]==0){
+						for(each in EbenenArray){
+							for(all in eval(EbenenArray[each]+puffer+'RandX')){
+								vary=eval(EbenenArray[each]+puffer+'RandX')[all];
+								switch(vary){
+									case 0:
+										UebertragungsVary=0;
+									break;
+									case 1:
+										UebertragungsVary=4;
+									break;
+									case 2:
+										UebertragungsVary=8;
+									break;
+									case 3:
+										UebertragungsVary=12;
+									break;
+								}
+								eval(EbenenArray[each]+puffer+'RandY')[all]=UebertragungsVary;
+							}
+						}
+					}
+				}
+
+				EbenenSchleifeVariationsCounter=0;
+
+			//Alle Ebenen werden Eingeschleift
+				for(all in EbenenArray){
+
+				//FuellVariablen Erstellung
+					wer=EbenenArray[all];
+
+					EbenenSchleifeVariationsCounter=0;
+
+				//EbenenErstellungsSchleife
+					for(x=0;x<SpaltenAnzahl;x++){
+						for(y=0;y<ReihenAnzahl;y++){
+
+						//EbeneErstellung
+							if(eval(wer+'Erweiterung')==true){
+
+							//Vorbereitung fuer die Pruefung ob die Abgefragte Koordinate innerhalb des WerterArray¥s liegt
+								eval(wer+'AbfrageY=y-1;');
+								eval(wer+'AbfrageX=x-1;');
+
+							//Beide Ausserhalb
+								if(eval(wer+'AbfrageY')<0&&eval(wer+'AbfrageX')<0)		{eval(wer+'Vorbedingung='+wer+puffer+'RandX['+x+']+'+wer+puffer+'RandY['+y+'];')}else
+
+							//Y-Wert Ausserhalb
+								if(eval(wer+'AbfrageY')<0&&eval(wer+'AbfrageX')>=0)	{eval(wer+'Vorbedingung='+wer+'YWerteArray[x-1][y]+'+wer+puffer+'RandX['+x+']')}else
+
+							//X-Wert Ausserhalb
+								if(eval(wer+'AbfrageY')>=0&&eval(wer+'AbfrageX')<0)	{eval(wer+'Vorbedingung='+wer+'XWerteArray[x][y-1]+'+wer+puffer+'RandY['+y+']')}else
+
+							//Beide Drin
+								if(eval(wer+'AbfrageY')>=0&&eval(wer+'AbfrageX')>=0)	{eval(wer+'Vorbedingung='+wer+'XWerteArray[x][y-1]+'+wer+'YWerteArray[x-1][y];')}
+
+							//Die EbeneKonstantenVary entscheidet welch Form die Ebenen-Inseln haben
+								eval(wer+'KonstantenVary='+eval(wer+'TeilCounterArray')[eval(wer+'TeilCounter')]);
+
+							//Erhoehung des TeilCounters
+								eval(wer+'TeilCounter++;');
+
+							//Wenn der TeilCounter groesser als der jeweilige Array ist wird dieser Gedreht,und der Counter wieder auf Null gestetzt.
+								if(eval(wer+'TeilCounter')>eval(wer+'TeilCounterArray.length-1')){
+									eval(wer+'TeilCounterArray.reverse()');
+									eval(wer+'TeilCounterVariationenArray.reverse()');
+									eval(wer+'TeilCounter=0');
+								}
+
+							//Die Teilstueck-Speicher-Array¥s werden hier bespeichert.
+								eval(wer+'XWerteArray')[x][y]=eval(wer+'XWert'+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0];
+								eval(wer+'YWerteArray')[x][y]=eval(wer+'YWert'+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0];
+
+							//TeileNummerArray wird beschrieben
+								ArrayLaenge=eval(wer+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0].length;
+								if(ArrayLaenge==5){
+									BildNummer=eval(wer+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0][4];
+								}else
+								if(ArrayLaenge==6){
+									BildNummer=eval(wer+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0][4]+eval(wer+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0][5];
+								}
+								eval(wer+'TeileNummerArray'+puffer)[x][y]=BildNummer;
+
+							//Da wo Rasen durchschaut wird je nach Baumrate ein Baum gesetzt.
+								if(wer=='ErsteEbene'&&(BildNummer==0||BildNummer==1||BildNummer==2||BildNummer==4||BildNummer==8||BildNummer==3||BildNummer==12||BildNummer==5||BildNummer==10||BildNummer==9||BildNummer==6)){
+									BaumArray[x][y]=parseInt(Math.random()+BaumRate);
+								}
+
+							//Da wo Rasen durchschaut wird je nach Buschrate ein Busch gesetzt.
+								if(wer=='ErsteEbene'&&(BildNummer==0||BildNummer==1||BildNummer==2||BildNummer==4||BildNummer==8||BildNummer==3||BildNummer==12||BildNummer==5||BildNummer==10||BildNummer==9||BildNummer==6)){
+									BuschArray[x][y]=parseInt(Math.random()+BuschRate);
+								}
+
+								EbenenPositionErmittlung(x,y,0);
+
+							//das hier ist noch ein mieser Fred weil ich es nicht hinbekomme dieErsteEbeneHTML mit nem Eval zu erschaffen... :(
+								if(wer=='ErsteEbene'){
+									dieErsteEbeneHTML+='<img src="'+EbenenUeberOrdnerArray[0]+'/'+eval(wer+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0]+'.'+ErsteEbeneTeilCounterVariationenArray[EbenenSchleifeVariationsCounter]+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+								}
+								else
+								if(wer=='ZweiteEbene'){
+									dieZweiteEbeneHTML+='<img src="'+EbenenUeberOrdnerArray[1]+'/'+eval(wer+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0]+'.'+ZweiteEbeneTeilCounterVariationenArray[EbenenSchleifeVariationsCounter]+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+								}
+								else
+								if(wer=='DritteEbene'){
+									dieDritteEbeneHTML+='<img src="'+EbenenUeberOrdnerArray[2]+'/'+eval(wer+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0]+'.'+DritteEbeneTeilCounterVariationenArray[EbenenSchleifeVariationsCounter]+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+								}
+								//else
+								//if(wer=='VierteEbene'){
+								//	dieVierteEbeneHTML+='<img src="'+EbenenUeberOrdnerArray[3]+'/'+eval(wer+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0]+'.'+VierteEbeneTeilCounterVariationenArray[EbenenSchleifeVariationsCounter]+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+								//}
+								//else
+								//if(wer=='FuenfteEbene'){
+								//	dieFuenfteEbeneHTML+='<img src="'+EbenenUeberOrdnerArray[4]+'/'+eval(wer+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0]+'.'+FuenfteEbeneTeilCounterVariationenArray[EbenenSchleifeVariationsCounter]+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+								//}else
+								//if(wer=='SechsteEbene'){
+								//	dieSechsteEbeneHTML+='<img src="'+EbenenUeberOrdnerArray[5]+'/'+eval(wer+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0]+'.'+SechsteEbeneTeilCounterVariationenArray[EbenenSchleifeVariationsCounter]+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+								//}
+								EbenenSchleifeVariationsCounter++;
+								if(EbenenSchleifeVariationsCounter>=ErsteEbeneTeilCounterVariationenArray.length){
+									EbenenSchleifeVariationsCounter=0;
+								}
+							}
+							
+
+						//Vorbereitung der RandVariablen
+							switch(puffer){
+								case 'KarteA0':
+									RandUnten='KarteA1';
+									RandRechts='KarteB0';
+								break;
+								case 'KarteA1':
+									RandUnten='KarteA2';
+									RandRechts='KarteB1';
+								break;
+								case 'KarteA2':
+									RandUnten='KarteA3';
+									RandRechts='KarteB2';
+								break;
+								case 'KarteA3':
+									RandUnten='KarteA4';
+									RandRechts='KarteB3';
+								break;
+								case 'KarteA4':
+									RandUnten='KarteA5';
+									RandRechts='KarteB4';
+								break;
+								case 'KarteA5':
+									RandUnten='KarteA6';
+									RandRechts='KarteB5';
+								break;
+								case 'KarteA6':
+									RandUnten='KarteA7';
+									RandRechts='KarteB6';
+								break;
+								case 'KarteB0':
+									RandUnten='KarteB1';
+									RandRechts='KarteC0';
+								break;
+								case 'KarteB1':
+									RandUnten='KarteB2';
+									RandRechts='KarteC1';
+								break;
+								case 'KarteB2':
+									RandUnten='KarteB3';
+									RandRechts='KarteC2';
+								break;
+								case 'KarteB3':
+									RandUnten='KarteB4';
+									RandRechts='KarteC3';
+								break;
+								case 'KarteB4':
+									RandUnten='KarteB5';
+									RandRechts='KarteC4';
+								break;
+								case 'KarteB5':
+									RandUnten='KarteB6';
+									RandRechts='KarteC5';
+								break;
+								case 'KarteB6':
+									RandUnten='KarteB7';
+									RandRechts='KarteC6';
+								break;
+								case 'KarteC0':
+									RandUnten='KarteC1';
+									RandRechts='KarteD0';
+								break;
+								case 'KarteC1':
+									RandUnten='KarteC2';
+									RandRechts='KarteD1';
+								break;
+								case 'KarteC2':
+									RandUnten='KarteC3';
+									RandRechts='KarteD2';
+								break;
+								case 'KarteC3':
+									RandUnten='KarteC4';
+									RandRechts='KarteD3';
+								break;
+								case 'KarteC4':
+									RandUnten='KarteC5';
+									RandRechts='KarteD4';
+								break;
+								case 'KarteC5':
+									RandUnten='KarteC6';
+									RandRechts='KarteD5';
+								break;
+								case 'KarteC6':
+									RandUnten='KarteC7';
+									RandRechts='KarteD6';
+								break;
+								case 'KarteD0':
+									RandUnten='KarteE1';
+									RandRechts='KarteD0';
+								break;
+								case 'KarteD1':
+									RandUnten='KarteD2';
+									RandRechts='KarteE1';
+								break;
+								case 'KarteD2':
+									RandUnten='KarteD3';
+									RandRechts='KarteE2';
+								break;
+								case 'KarteD3':
+									RandUnten='KarteD4';
+									RandRechts='KarteE3';
+								break;
+								case 'KarteD4':
+									RandUnten='KarteD5';
+									RandRechts='KarteE4';
+								break;
+								case 'KarteD5':
+									RandUnten='KarteD6';
+									RandRechts='KarteE5';
+								break;
+								case 'KarteD6':
+									RandUnten='KarteD7';
+									RandRechts='KarteE6';
+								break;
+							}
+
+						//Erstellung der unteren RandArray¥s falls die Karte nach S¸den hin verlassen wird.
+							if(y==ReihenAnzahl-1){
+								eval(wer+RandUnten+'RandX')[x]=eval(wer+'XWert'+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0];
+							}
+
+						//Erstellung der rechten RandArray¥s falls die Karte nach Osten hin verlassen wird.
+							if(x==ReihenAnzahl-1){
+								eval(wer+RandRechts+'RandY')[y]=eval(wer+'YWert'+eval(wer+'Vorbedingung'))[eval(wer+'KonstantenVary')][0];
+							}
+						}
+					}
+
+				//Beschreiben der Ebenen-Puffer-Vary
+					eval(EbenenArray[all]+puffer+'=die'+EbenenArray[all]+'HTML;');
+				}
+			}
+
+		//Globale KartenVariable
+			AktuelleKarte='';
+
+		//Damit der GameCycle nur einmal Aufgerufen wird.
+			GameCycleLaueft=false;
+
+		//Globale Ebenen-Vary fuer den Fog of War
+			derFogOfWar='';
+
+			init=function(puffer){
+
+			//Drag'n'Drop Initialisierung
+				draginit();
+
+			//Zentriert die Karte
+				Zentrieren();
+
+			//Beschreibung der Globalen KartenVariable
+				AktuelleKarte=puffer;
+
+			//Im Falle der KarteA0 setzte die Steinmiene
+				if(puffer=='KarteA0'){
+					$('SteinMiene').style.display='block';
+				}else{
+					$('SteinMiene').style.display='none';
+				}
+
+			//Alle EbenenVaris werden geloescht
+				EbenenLoeschen();
+
+			//Wenn die Karte schon geladen wurde.
+				if(eval(puffer+'Geladen==true')){
+					vary='TeileNummerArray'+puffer;
+					BauJetzt(vary,puffer);
+				}
+
+				//Wenn die Karte noch nicht geladen wurde.
+					else{
+						derFogOfWar='';
+						for(all in eval('FogOfWar'+puffer)){
+							for(each in eval('FogOfWar'+puffer)[0]){
+								EbenenPositionErmittlung(all,each,0);
+								derFogOfWar+='<img src="Fog.png" id="FogX'+all+'Y'+each+puffer+'" class="A ZI9 '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+							}
+						}
+						HinterGrundErstellung(puffer);
+
+						EbenenSchleife(puffer);
+
+						BaumSchleife(puffer);
+						BuschSchleife(puffer);
+
+						BGSkalierung();
+
+						FogSkalierung();
+
+						EbenenEinfuegung(puffer);
+
+					if(AvatarSkaliert==false){
+						AvatarSkalierung();
+					}
+
+					BaumSkalierung();
+					BuescheSkalierung();
+
+					if(RandSkaliert==false){
+						RandSkalierung(RandNamenArray);
+						RandSkalierung(InventoryRandNamenArray);
+						RandSkalierung(ChatBoxRandNamenArray);
+						RandSkalierung(CharakterBoxRandNamenArray);
+					}
+					eval(puffer+'Geladen=true');
+				}
+				if(GameCycleLaueft==false){
+					window.setInterval('GameCycle()',145);
+					//window.setInterval('GameCycleGegner()',245);
+					GameCycleLaueft=true;
+				}
+			}
+
+		//BaumSkalierung
+			BaumSkalierung=function(){
+				$('theBaeume').innerHTML=dieBaeumeHTML;
+				$('theBaeume').style.position='absolute';
+				$('theBaeume').style.left=EbenenVaryLeft;
+				$('theBaeume').style.top=EbenenVaryTop;
+				$('theBaeume').style.width=EbenenVaryWidth;
+				$('theBaeume').style.height=EbenenVaryHeight;
+				$('theBaeume').style.zIndex=7;
+			}
+
+		//BuschSkalierung
+			BuescheSkalierung=function(){
+				$('theBuesche').innerHTML=dieBuescheHTML;
+				$('theBuesche').style.position='absolute';
+				$('theBuesche').style.left=EbenenVaryLeft;
+				$('theBuesche').style.top=EbenenVaryTop;
+				$('theBuesche').style.width=EbenenVaryWidth;
+				$('theBuesche').style.height=EbenenVaryHeight;
+				$('theBuesche').style.zIndex=1;
+			}
+
+		//HintergrundSkalierung
+			BGSkalierung=function(){
+				$('theBackground').innerHTML=dieBGHTML;
+				$('theBackground').style.position='absolute';
+				$('theBackground').style.left=EbenenVaryLeft;
+				$('theBackground').style.top=EbenenVaryTop;
+				$('theBackground').style.width=EbenenVaryWidth;
+				$('theBackground').style.height=EbenenVaryHeight;
+			}
+
+		//HintergrundSkalierung
+			FogSkalierung=function(){
+				$('theFog').innerHTML=derFogOfWar;
+				$('theFog').style.position='absolute';
+				$('theFog').style.left=EbenenVaryLeft;
+				$('theFog').style.top=EbenenVaryTop;
+				$('theFog').style.width=EbenenVaryWidth;
+				$('theFog').style.height=EbenenVaryHeight;
+			}
+
+		//RandSkalierung
+			RandSkalierung=function(wer){
+				for(all in wer){
+					$(wer[all]).style.position='absolute';
+					$(wer[all]).style.backgroundImage='url('+wer[all]+'.png)';
+					$(wer[all]).style.left=RandLeftArray[all]+'%';
+					$(wer[all]).style.top=RandTopArray[all]+'%';
+					$(wer[all]).style.width=RandWidthArray[all]+'%';
+					$(wer[all]).style.height=RandHeightArray[all]+'%';
+					$(wer[all]).style.zIndex=10;
+				}
+				RandSkaliert=true;
+			}
+
+		//AvatarSkalierung
+			AvatarSkalierung=function(){
+				$('AvatarContainer').style.position='absolute';
+				$('AvatarContainer').style.left=37+'%';
+				$('AvatarContainer').style.top=33+'%';
+				$('AvatarContainer').style.width=5+'%';
+				$('AvatarContainer').style.height=5+'%';
+				$('AvatarContainer').style.zIndex=7;
+				$('Avatar').style.width=42+'%';
+				$('Avatar').style.height=42+'%';
+				$('Avatar').style.zIndex=7;
+				AvatarSkaliert=true;
+			}
+
+		//AstSkalierung
+			AstSkalierung=function(){
+				$('AstContainer').style.position='absolute';
+				$('AstContainer').style.left=37+'%';
+				$('AstContainer').style.top=33+'%';
+				$('AstContainer').style.width=5+'%';
+				$('AstContainer').style.height=5+'%';
+				$('AstContainer').style.zIndex=7;
+				$('Ast').style.width=42+'%';
+				$('Ast').style.height=42+'%';
+				$('Ast').style.zIndex=7;
+				AstSkaliert=true;
+			}
+
+			BildPuffer='';
+			ChangeImage=function(wer,bildnummer){
+				if(wer.src.toString()!="Baum/TanneWeg0.png"&&wer.offsetLeft+wer.offsetWidth>$('AvatarContainer').offsetLeft&&wer.offsetLeft<$('AvatarContainer').offsetLeft&&wer.offsetTop<$('AvatarContainer').offsetTop&&wer.offsetTop+wer.offsetHeight>$('AvatarContainer').offsetTop){
+					BildPuffer=wer.src;
+					wer.src='Baum/Tanne'+bildnummer+'B.png';
+				}else if(wer.src.toString()!="Baum/TanneWeg0.png"){
+					BildPuffer=wer.src;
+					wer.src='Baum/Tanne'+bildnummer+'B.png';
+				}
+			}
+
+			ChangeImageBack=function(wer){
+				if(wer.src.toString()!='Baum/TanneWeg0.png'){
+					wer.src=BildPuffer;
+				}
+				//$('Axt').style.display='none';
+			}
+
+			Farmen=function(wer,was){
+	if(was=='Busch'){
+						alert('Busch');
+					}
+				if(wer.offsetLeft+wer.offsetWidth>$('AvatarContainer').offsetLeft&&wer.offsetLeft<$('AvatarContainer').offsetLeft&&wer.offsetTop<$('AvatarContainer').offsetTop&&wer.offsetTop+wer.offsetHeight>$('AvatarContainer').offsetTop){
+					
+					if(was=='Holz'){
+						$('Axt').style.display='block';
+						$('Axt').style.left=wer.offsetLeft+30;
+						$('Axt').style.top=wer.offsetTop+30;
+					}
+					if(eval(was+'Laueft==false')){
+						$('LadeBalken').style.display='block';
+						$('LadeBalken').src='LadeBalken5.png';
+						FarmObjekt=wer;
+						$('LadeBalken').style.position='absolute';
+						$('LadeBalken').style.left=FarmObjekt.offsetLeft+(FarmObjekt.offsetWidth/2);
+						$('LadeBalken').style.top=FarmObjekt.offsetTop+(FarmObjekt.offsetHeight/2);
+						$('LadeBalken').style.height=2+'%';
+						$('LadeBalken').style.width=2+'%';
+						$('LadeBalken').style.zIndex=8;
+						eval(was+'Laueft=true');
+						if(was=='Steine'){
+							SteineInterval=window.setInterval('LadeBalken(\'Steine\')',eval(was+'Geschwindigkeit'));
+						}else
+						if(was=='Holz'){
+							HolzInterval=window.setInterval('LadeBalken(\'Holz\')',eval(was+'Geschwindigkeit'));
+						}
+					}
+				}
+				else{AufDemWegZumSteine=true;}
+			}
+
+			TanneWegArray=[0,3,7,1,6,2,4,5,1,6,6,2,7,1,3,6,3,5,4,3,7,6,2,5,1,1,5,0,6,7,6,1,5,2,1,3,1,5,1,2,6,7,3,3,6,2,4,3,7,5,2,3,6,1,7,4,0];
+			TanneWegCounter=0;
+
+			LadeBalken=function(was){
+				if(FarmObjekt.offsetLeft+FarmObjekt.offsetWidth>$('AvatarContainer').offsetLeft&&FarmObjekt.offsetLeft<$('AvatarContainer').offsetLeft&&FarmObjekt.offsetTop<$('AvatarContainer').offsetTop&&FarmObjekt.offsetTop+FarmObjekt.offsetHeight>$('AvatarContainer').offsetTop){
+					
+					eval(was+'Konsti--');
+					$('LadeBalken').src='LadeBalken'+eval(was+'Konsti')+'.png';
+					if(eval(was+'Konsti')<-1){
+						$('LadeBalken').src='LadeBalken0.png';
+						$('LadeBalken').style.display='none';
+						eval(was+'Konsti=5');
+						eval(was+'Laueft=false');
+						WarenDeal(was,1,1);
+						if(was=='Holz'){
+							FarmObjekt.src='Baum/TanneWeg'+TanneWegArray[TanneWegCounter]+'.png';
+							TanneWegCounter++;
+							if(TanneWegCounter>=TanneWegArray.length){
+								TanneWegCounter=0;
+							}
+							FarmObjekt.onmouseover='';
+							FarmObjekt.onmouseout='';
+							FarmObjekt.onmouseup='';
+							FarmObjekt.style.zIndex=1;
+							$('Axt').style.display='none';
+							$(FarmObjekt.id).style.zIndex=1;
+							for(x=0;x<SpaltenAnzahl;x++){
+								for(y=0;y<ReihenAnzahl;y++){
+									if(eval('BaumIDSpeicherArray'+AktuelleKarte)[x][y]==FarmObjekt.id){
+										eval('BaumSpeicherArray'+AktuelleKarte)[x][y]='Abgeholzt';
+									}
+								}
+							}
+							for(x=0;x<SpaltenAnzahl;x++){
+								for(y=0;y<ReihenAnzahl;y++){
+									if(eval('BuschIDSpeicherArray'+AktuelleKarte)[x][y]==FarmObjekt.id){
+										eval('BuschSpeicherArray'+AktuelleKarte)[x][y]='Abgeholzt';
+									}
+								}
+							}
+						}
+						clearInterval(eval(was+'Interval'));
+					}
+				}
+				else{
+						$('LadeBalken').style.display='none';
+						$('Axt').style.display='none';
+					eval(was+'Laueft=false');
+					eval(was+'Konsti=5');
+					clearInterval(eval(was+'Interval'));
+				}
+			}
+
+			WarenDeal=function(ware,menge,vorzeichen){
+				eval('Player.Waren.'+ware+'+=vorzeichen*menge;');
+				CheckLager(ware);
+			}
+
+			EinHeitenMengeArray=[256,128,64,32,16,8,4,2,1];
+
+			CheckLager=function(was){
+				eval(was+'Vary=Player.Waren.'+was+';');
+				for(all in EinHeitenMengeArray){
+					if(eval(was+'Vary<'+EinHeitenMengeArray[all])){$(was+'Einheit'+EinHeitenMengeArray[all]).style.backgroundColor='Blue';}else{$(was+'Einheit'+EinHeitenMengeArray[all]).style.backgroundColor='green';eval(was+'Vary-='+EinHeitenMengeArray[all]+';')}
+				}
+			}
+
+		//Haus Onmouse-Over-Leuchten
+			ChangeHaus=function(thisvary,string){
+				thisvary.src=string+'.png';
+			}
+
+			IstFogDa=false;
+
+			for(all in KartenArray){
+				eval("FogOfWarWeg"+KartenArray[all]+"=false;");
+			}
+			BauJetztVariationsCounter=0;
+		//Initialisierung der Ebenen
+			BauJetzt=function(was,puffer){
+				BauJetztVariationsCounter=0;
+				if(puffer=='KarteA0'){
+					$('SteinMiene').style.display='block';
+				}else{
+					$('SteinMiene').style.display='none';
+				}
+				EbenenLoeschen();
+				HinterGrundErstellung(puffer);
+				TanneWegCounter=0;
+				for(x=0;x<SpaltenAnzahl;x++){
+					for(y=0;y<ReihenAnzahl;y++){
+						EbenenPositionErmittlung(x,y,0);
+
+						dieErsteEbeneHTML+='<img src="'+EbenenUeberOrdnerArray[0]+'/'+EbenenMaterieArray[0]+eval('ErsteEbene'+was)[x][y]+'.'+ErsteEbeneTeilCounterVariationenArray[BauJetztVariationsCounter]+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+						dieZweiteEbeneHTML+='<img src="'+EbenenUeberOrdnerArray[1]+'/'+EbenenMaterieArray[1]+eval('ZweiteEbene'+was)[x][y]+'.'+ZweiteEbeneTeilCounterVariationenArray[BauJetztVariationsCounter]+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+						dieDritteEbeneHTML+='<img src="'+EbenenUeberOrdnerArray[2]+'/'+EbenenMaterieArray[2]+eval('DritteEbene'+was)[x][y]+'.'+DritteEbeneTeilCounterVariationenArray[BauJetztVariationsCounter]+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+						//dieVierteEbeneHTML+='<img src="'+EbenenUeberOrdnerArray[3]+'/'+EbenenMaterieArray[3]+eval('VierteEbene'+was)[x][y]+'.'+VierteEbeneTeilCounterVariationenArray[BauJetztVariationsCounter]+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+						//dieFuenfteEbeneHTML+='<img src="'+EbenenUeberOrdnerArray[4]+'/'+EbenenMaterieArray[4]+eval('FuenfteEbene'+was)[x][y]+'.'+FuenfteEbeneTeilCounterVariationenArray[BauJetztVariationsCounter]+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+						//dieSechsteEbeneHTML+='<img src="'+EbenenUeberOrdnerArray[5]+'/'+EbenenMaterieArray[5]+eval('SechsteEbene'+was)[x][y]+'.'+SechsteEbeneTeilCounterVariationenArray[BauJetztVariationsCounter]+'.png" class="A '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+
+						BauJetztVariationsCounter++;
+						if(BauJetztVariationsCounter>=ErsteEbeneTeilCounterVariationenArray.length){
+							BauJetztVariationsCounter=0;
+						}
+
+						BaumKonstantenVary=eval('BaumSpeicherArray'+puffer)[x][y];
+						if(BaumKonstantenVary=='Abgeholzt'){
+							dieBaeumeHTML+='<img id="'+IDVary+'" src="Baum/TanneWeg'+TanneWegArray[TanneWegCounter]+'.png" class="A ZI10 '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+							TanneWegCounter++;
+							if(TanneWegCounter>=TanneWegArray.length){
+								TanneWegCounter=0;
+							}
+						}
+						else
+						if(BaumKonstantenVary=='x'){
+						}
+						else{
+							vary=BaumKonstantenVary;
+							IDVary=eval('BaumIDSpeicherArray'+puffer)[x][y];
+							ZFVary=eval('BaumZFVarySpeicherArray'+puffer)[x][y];
+
+							EbenenPositionErmittlung(x,y,ZFVary);
+
+							dieBaeumeHTML+='<img id="'+IDVary+'" onmouseover="ChangeImage(this,'+vary+')" onmouseout="ChangeImageBack(this,'+vary+')" onmouseup="Farmen(this,\'Holz\')" src="Baum/Tanne'+vary+'.png" class="A ZI7 '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+						}
+
+						BuschKonstantenVary=eval('BuschSpeicherArray'+puffer)[x][y];
+						if(BuschKonstantenVary=='Abgeholzt'){
+							dieBuescheHTML+='<img id="'+IDVary+'" src="Baum/TanneWeg0.png" class="A ZI10 '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+						}
+						else
+						if(BuschKonstantenVary=='x'){
+						}
+						else{
+							vary=BuschKonstantenVary;
+							IDVary=eval('BuschIDSpeicherArray'+puffer)[x][y];
+							ZFVary=eval('BuschZFVarySpeicherArray'+puffer)[x][y];
+
+							EbenenPositionErmittlung(x,y,ZFVary);
+
+							dieBuescheHTML+='<img id="'+IDVary+'"onmouseover="ChangeImage(this,'+vary+')" onmouseout="ChangeImageBack(this,'+vary+')" onmouseup="Farmen(this,\'Busch\')" src="Busch/Busch'+vary+'.png" class="A ZI7 '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';//onmouseover="ChangeImage(this)" onmouseout="ChangeImageBack(this)" onmouseup="Farmen(this,\'Holz\')"
+						}
+
+						for(all in EbenenArray){
+							eval(EbenenArray[all]+puffer+'=die'+EbenenArray[all]+'HTML;');
+						}
+					}
+				}
+				derFogOfWar='';
+				IstFogDa=false;
+				for(all in eval('FogOfWar'+puffer)){
+					for(each in eval('FogOfWar'+puffer)[0]){
+						EbenenPositionErmittlung(all,each,0);
+						if(eval('FogOfWar'+puffer)[all][each]==0){
+							derFogOfWar+='<img src="Fog.png" id="FogX'+all+'Y'+each+puffer+'" class="A ZI9 '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+							IstFogDa=true;
+						}
+						if(eval('FogOfWar'+puffer)[all][each]==1){
+							derFogOfWar+='<img src="Fog2.png" id="FogX'+all+'Y'+each+puffer+'" class="A ZI9 '+XXX+' '+YYY+' '+HeightVary+' '+WidthVary+'"/>';
+							IstFogDa=true;
+						}
+					}
+				}
+				if(IstFogDa==false){
+					eval('FogOfWarWeg'+puffer+'=true;');
+				}
+				BGSkalierung();
+				FogSkalierung();
+				BaumSkalierung();
+				BuescheSkalierung();
+				EbenenEinfuegung(puffer);
+			}
+
+			AvatarVersetzung=function(woraus){
+				switch(woraus){
+					case 'Oben':
+						$('AvatarContainer').style.top=95+'%';
+					break;
+					case 'Unten':
+						$('AvatarContainer').style.top=5+'%';
+					break;
+					case 'Links':
+						$('AvatarContainer').style.left=95+'%';
+					break;
+					case 'Rechts':
+						$('AvatarContainer').style.left=5+'%';
+					break;
+				}
+			}
+
+			function WasIstUnterDerMaus (Ereignis){
+				if($('AvatarContainer').offsetLeft-10<MausX&&$('AvatarContainer').offsetLeft+($('AvatarContainer').offsetWidth/2)>MausX&&$('AvatarContainer').offsetTop-10<MausY&&$('AvatarContainer').offsetTop+($('AvatarContainer').offsetHeight/2)>MausY){//
+					ChangeHaus($('Avatar'),'Avatarb');
+				}
+			}
+
+			MausX=0;
+			MausY=0;
+			function Mausklick (Ereignis){
+				if(Ereignis.clientX>=$('Welt').offsetLeft&&Ereignis.clientX<$('Welt').offsetLeft+$('Welt').offsetWidth&&Ereignis.clientY>=$('Welt').offsetTop&&Ereignis.clientY<$('Welt').offsetTop+$('Welt').offsetHeight){
+					MausX=Ereignis.clientX-$('Welt').offsetLeft;
+					MausY=Ereignis.clientY-$('Welt').offsetTop;
+				}
+			}
+			function Anzeigen(Ereignis){
+				MausEinsammelnX=Ereignis.clientX;
+				MausEinsammelnY=Ereignis.clientY;
+				if($('Ast').offsetLeft<=MausEinsammelnX&&$('Ast').offsetLeft+($('Ast').offsetWidth/2)>MausEinsammelnX&&$('Ast').offsetTop<=MausEinsammelnY&&$('Ast').offsetTop+($('Ast').offsetHeight/2)>MausEinsammelnY){//
+					ChangeHaus($('Ast'),'Ast1B');
+				}else{
+				ChangeHaus($('Ast'),'Ast1');
+				}
+			}
+
+			document.onmousedown=Mausklick;
+
+			document.onmouseup=WasIstUnterDerMaus;
+
+			FogErfassungsMaﬂeX=0;
+			FogErfassungsMaﬂeY=0;
+			SchrittMaﬂX=0;
+			SchrittMaﬂY=0;
+
+			Bildnummer='';
+			Gegner=['Krebs1'];
+			GameCycleGegner=function(){
+			for(all in Gegner){
+				if($(Gegner[all]).offsetLeft<$('AvatarContainer').offsetLeft){
+					vary1=1;
+				}else{
+					vary1=0;
+				}
+				if($(Gegner[all]).offsetTop<$('AvatarContainer').offsetTop){
+					vary2=2;
+				}else{
+					vary2=0;
+				}
+				if($(Gegner[all]).offsetLeft>$('AvatarContainer').offsetLeft){
+					vary3=4;
+				}else{
+					vary3=0;
+				}
+				if($(Gegner[all]).offsetTop>$('AvatarContainer').offsetTop){
+					vary4=8;
+				}else{
+					vary4=0;
+				}
+				vary5=vary1+vary2+vary3+vary4;
+				if(Bildnummer=='1.png'){
+					Bildnummer='2.png';
+				}else{
+					Bildnummer='1.png';
+				}
+				switch(vary5){
+					case 1:
+						vary=$(Gegner[all]).offsetLeft+2;
+						$(Gegner[all]).style.left=vary;
+						$(Gegner[all]).src=Gegner[0]+'Rechts'+Bildnummer;
+					break;
+					case 2:
+						vary=$(Gegner[all]).offsetTop+2;
+						$(Gegner[all]).style.top=vary;
+						$(Gegner[all]).src=Gegner[0]+'Unten'+Bildnummer;
+					break;
+					case 4:
+						vary=$(Gegner[all]).offsetLeft-2;
+						$(Gegner[all]).style.left=vary;
+						$(Gegner[all]).src=Gegner[0]+'Links'+Bildnummer;
+					break;
+					case 8:
+						vary=$(Gegner[all]).offsetTop-2;
+						$(Gegner[all]).style.top=vary;
+						$(Gegner[all]).src=Gegner[0]+'Oben'+Bildnummer;
+					break;
+					case 3:
+						vary=$(Gegner[all]).offsetLeft+2;
+						vary2=$(Gegner[all]).offsetTop+2;
+						$(Gegner[all]).style.left=vary;
+						$(Gegner[all]).style.top=vary2;
+						$(Gegner[all]).src=Gegner[0]+'RechtsUnten'+Bildnummer;
+					break;
+					case 6:
+						vary=$(Gegner[all]).offsetLeft-2;
+						vary2=$(Gegner[all]).offsetTop+2;
+						$(Gegner[all]).style.left=vary;
+						$(Gegner[all]).style.top=vary2;
+						$(Gegner[all]).src=Gegner[0]+'LinksUnten'+Bildnummer;
+					break;
+					case 9:
+						vary=$(Gegner[all]).offsetLeft+2;
+						vary2=$(Gegner[all]).offsetTop-2;
+						$(Gegner[all]).style.left=vary;
+						$(Gegner[all]).style.top=vary2;
+						$(Gegner[all]).src=Gegner[0]+'RechtsOben'+Bildnummer;
+					break;
+					case 12:
+						vary=$(Gegner[all]).offsetLeft-2;
+						vary2=$(Gegner[all]).offsetTop-2;
+						$(Gegner[all]).style.left=vary;
+						$(Gegner[all]).style.top=vary2;
+						$(Gegner[all]).src=Gegner[0]+'LinksOben'+Bildnummer;
+					break;
+				}
+			}
+		}
+			GameCycle=function(){
+				if(eval('FogOfWarWeg'+AktuelleKarte+'==false')){
+					FogPuffer=eval('FogOfWar'+AktuelleKarte);
+					for(x=0;x<SpaltenAnzahl;x++){
+						for(y=0;y<ReihenAnzahl;y++){
+							if(FogPuffer[x][y]==0){
+								FogErfassungsMaﬂeX=($('theBackground').offsetWidth/100)*9;
+								FogErfassungsMaﬂeY=($('theBackground').offsetHeight/100)*12;
+								if($('FogX'+x+'Y'+y+AktuelleKarte).offsetLeft-FogErfassungsMaﬂeX<$('AvatarContainer').offsetLeft&&$('FogX'+x+'Y'+y+AktuelleKarte).offsetLeft+$('FogX'+x+'Y'+y+AktuelleKarte).offsetWidth+FogErfassungsMaﬂeY>$('AvatarContainer').offsetLeft&&$('FogX'+x+'Y'+y+AktuelleKarte).offsetTop-FogErfassungsMaﬂeX<$('AvatarContainer').offsetTop&&$('FogX'+x+'Y'+y+AktuelleKarte).offsetTop+$('FogX'+x+'Y'+y+AktuelleKarte).offsetHeight+FogErfassungsMaﬂeY>$('AvatarContainer').offsetTop){
+									$('FogX'+x+'Y'+y+AktuelleKarte).style.display='none';
+									$('FogX'+x+'Y'+y+AktuelleKarte).style.zIndex=0;
+									FogPuffer[x][y]=1;
+								}
+							}else
+							if(FogPuffer[x][y]==1){
+								FogErfassungsMaﬂeX=($('theBackground').offsetWidth/100)*9;
+								FogErfassungsMaﬂeY=($('theBackground').offsetHeight/100)*12;
+								if($('FogX'+x+'Y'+y+AktuelleKarte).offsetLeft-FogErfassungsMaﬂeX<$('AvatarContainer').offsetLeft&&$('FogX'+x+'Y'+y+AktuelleKarte).offsetLeft+$('FogX'+x+'Y'+y+AktuelleKarte).offsetWidth+FogErfassungsMaﬂeY>$('AvatarContainer').offsetLeft&&$('FogX'+x+'Y'+y+AktuelleKarte).offsetTop-FogErfassungsMaﬂeX<$('AvatarContainer').offsetTop&&$('FogX'+x+'Y'+y+AktuelleKarte).offsetTop+$('FogX'+x+'Y'+y+AktuelleKarte).offsetHeight+FogErfassungsMaﬂeY>$('AvatarContainer').offsetTop){
+									$('FogX'+x+'Y'+y+AktuelleKarte).style.display='none';
+									$('FogX'+x+'Y'+y+AktuelleKarte).style.zIndex=0;
+								}
+							}
+						}
+					}
+				}
+				SchrittMaﬂX=($('theBackground').offsetWidth/100);
+				SchrittMaﬂY=($('theBackground').offsetHeight/100);
+
+				if($('AvatarContainer').offsetLeft-5>MausX&&$('AvatarContainer').offsetTop-5>MausY){
+					$('AvatarContainer').style.left=$('AvatarContainer').offsetLeft-(SchrittMaﬂX/3)*2+'px';
+					$('AvatarContainer').style.top=$('AvatarContainer').offsetTop-(SchrittMaﬂY/3)*2+'px';
+					AvatarBildWechsel('OL');
+				}else
+				if($('AvatarContainer').offsetLeft+5<MausX&&$('AvatarContainer').offsetTop+5<MausY){
+					$('AvatarContainer').style.left=$('AvatarContainer').offsetLeft+(SchrittMaﬂX/3)*2+'px';
+					$('AvatarContainer').style.top=$('AvatarContainer').offsetTop+(SchrittMaﬂY/3)*2+'px';
+					AvatarBildWechsel('UR');
+				}else
+				if($('AvatarContainer').offsetLeft-5>MausX&&$('AvatarContainer').offsetTop+5<MausY){
+					$('AvatarContainer').style.left=$('AvatarContainer').offsetLeft-(SchrittMaﬂX/3)*2+'px';
+					$('AvatarContainer').style.top=$('AvatarContainer').offsetTop+(SchrittMaﬂY/3)*2+'px';
+					AvatarBildWechsel('UL');
+				}else
+				if($('AvatarContainer').offsetLeft+5<MausX&&$('AvatarContainer').offsetTop-5>MausY){
+					$('AvatarContainer').style.left=$('AvatarContainer').offsetLeft+(SchrittMaﬂX/3)*2+'px';
+					$('AvatarContainer').style.top=$('AvatarContainer').offsetTop-(SchrittMaﬂY/3)*2+'px';
+					AvatarBildWechsel('OR');
+				}else
+				if($('AvatarContainer').offsetLeft-5>MausX){
+					$('AvatarContainer').style.left=$('AvatarContainer').offsetLeft-SchrittMaﬂX+'px';
+					AvatarBildWechsel('L');
+				}else
+				if($('AvatarContainer').offsetLeft+5<MausX){
+					$('AvatarContainer').style.left=$('AvatarContainer').offsetLeft+SchrittMaﬂX+'px';
+					AvatarBildWechsel('R');
+				}else
+				if($('AvatarContainer').offsetTop-5>MausY){
+					$('AvatarContainer').style.top=$('AvatarContainer').offsetTop-SchrittMaﬂY+'px';
+					AvatarBildWechsel('O');
+				}else
+				if($('AvatarContainer').offsetTop+5<MausY){
+					$('AvatarContainer').style.top=$('AvatarContainer').offsetTop+SchrittMaﬂY+'px';
+					AvatarBildWechsel('U');
+				}
+			}
+
+			Kugel1Permanent=false;
+			Kugel2Permanent=false;
+			Kugel3Permanent=false;
+
+			LogoLight=function(KugelNR,Zustand){
+				if(KugelNR==1&&Zustand==2&&Kugel1Permanent==false){
+					Kugel1Permanent=true;
+					$('InventoryContainer').style.visibility='visible';
+				}
+				else if(KugelNR==1&&Zustand==2&&Kugel1Permanent==true){
+					Kugel1Permanent=false;
+					$('InventoryContainer').style.visibility='hidden';
+				}
+				
+				if(KugelNR==2&&Zustand==2&&Kugel2Permanent==false){
+					Kugel2Permanent=true;
+					$('ChatBoxContainer').style.visibility='visible';
+				}
+				else if(KugelNR==2&&Zustand==2&&Kugel2Permanent==true){
+					Kugel2Permanent=false;
+					$('ChatBoxContainer').style.visibility='hidden';
+				}
+				
+				if(KugelNR==3&&Zustand==2&&Kugel3Permanent==false){
+					Kugel3Permanent=true;
+					$('CharakterBoxContainer').style.visibility='visible';
+				}
+				else if(KugelNR==3&&Zustand==2&&Kugel3Permanent==true){
+					Kugel3Permanent=false;
+					$('CharakterBoxContainer').style.visibility='hidden';
+				}
+				
+				if(KugelNR==1&&Zustand==2&&Kugel1Permanent==false){
+					$('Kugel1').style.top=55+'px';
+					$('Kugel1').style.left=130+'px';
+					$('InventoryContainer').style.visibility='hidden';
+				}else if(KugelNR==1&&Zustand==2&&Kugel1Permanent==true){
+					$('Kugel1').style.top=50+'px';
+					$('Kugel1').style.left=170+'px';
+					$('InventoryContainer').style.visibility='visible';
+				}
+				
+				if(KugelNR==1&&Zustand==1&&Kugel1Permanent==false){
+					$('Kugel1').style.top=55+'px';
+					$('Kugel1').style.left=130+'px';
+					$('InventoryContainer').style.visibility='hidden';
+				}else if(KugelNR==1&&Zustand==0&&Kugel1Permanent==false){
+					$('Kugel1').style.top=50+'px';
+					$('Kugel1').style.left=170+'px';
+					$('InventoryContainer').style.visibility='visible';
+				}
+				
+				if(KugelNR==2&&Zustand==2&&Kugel2Permanent==false){
+					$('Kugel2').style.top=105+'px';
+					$('Kugel2').style.left=95+'px';
+					$('ChatBoxContainer').style.visibility='hidden';
+				}else if(KugelNR==2&&Zustand==2&&Kugel2Permanent==true){
+					$('Kugel2').style.top=145+'px';
+					$('Kugel2').style.left=125+'px';
+					$('ChatBoxContainer').style.visibility='visible';
+				}
+				if(KugelNR==2&&Zustand==1&&Kugel2Permanent==false){
+					$('Kugel2').style.top=105+'px';
+					$('Kugel2').style.left=95+'px';
+					$('ChatBoxContainer').style.visibility='hidden';
+				}else if(KugelNR==2&&Zustand==0&&Kugel2Permanent==false){
+					$('Kugel2').style.top=145+'px';
+					$('Kugel2').style.left=125+'px';
+					$('ChatBoxContainer').style.visibility='visible';
+				}
+
+				if(KugelNR==3&&Zustand==2&&Kugel3Permanent==false){
+					$('Kugel3').style.top=120+'px';
+					$('Kugel3').style.left=30+'px';
+					$('CharakterBoxContainer').style.visibility='hidden';
+				}else if(KugelNR==3&&Zustand==2&&Kugel3Permanent==true){
+					$('Kugel3').style.top=160+'px';
+					$('Kugel3').style.left=6+'px';
+					$('CharakterBoxContainer').style.visibility='visible';
+				}
+				if(KugelNR==3&&Zustand==1&&Kugel3Permanent==false){
+					$('Kugel3').style.top=120+'px';
+					$('Kugel3').style.left=30+'px';
+					$('CharakterBoxContainer').style.visibility='hidden';
+				}else if(KugelNR==3&&Zustand==0&&Kugel3Permanent==false){
+					$('Kugel3').style.top=160+'px';
+					$('Kugel3').style.left=6+'px';
+					$('CharakterBoxContainer').style.visibility='visible';
+				}
+			}
+
+			Zentrieren=function(){
+				randLinks=0;
+				randOben=0;
+				if(window.innerWidth>750){
+					randLinks=(window.innerWidth-750)/2;
+				}
+				if(window.innerHeight>750){
+					randOben=(window.innerHeight-750)/2;
+				}
+				$('Welt').style.left=randLinks+'px';
+				$('Welt').style.top=randOben+'px';
+			}
+			onresize=Zentrieren;
+
+			//Das Objekt, das gerade bewegt wird.
+			var dragobjekt=null;
+
+			//Position, an der das Objekt angeklickt wurde.
+			var dragx=0;
+			var dragy=0;
+
+			//Mausposition
+			var posxx=0;
+			var posyy=0;
+
+			function draginit() {
+				//Initialisierung der ‹berwachung der Events
+
+				document.onmousemove=drag;
+				document.onmouseup=dragstop;
+			}
+
+
+			function dragstart(element) {
+				//Wird aufgerufen, wenn ein Objekt bewegt werden soll.
+					dragobjekt=element;
+					dragx=posxx-dragobjekt.offsetLeft;
+					dragy=posyy-dragobjekt.offsetTop;
+			}
+
+			WasWardragobjekt='';
+
+			function dragstop(){
+				//Wird aufgerufen, wenn ein Objekt nicht mehr bewegt werden soll.
+
+				if(dragobjekt.offsetLeft<0){
+					dragobjekt.style.left=10+'px';
+				}
+				if(dragobjekt.offsetTop<0){
+					dragobjekt.style.top=0+'px';
+				}
+				if(dragobjekt.offsetLeft+dragobjekt.offsetWidth>window.innerWidth){
+					dragobjekt.style.left=window.innerWidth-dragobjekt.offsetWidth+'px';
+				}
+				if(dragobjekt.offsetTop+dragobjekt.offsetHeight>window.innerHeight){
+					dragobjekt.style.top=window.innerHeight-dragobjekt.offsetHeight+'px';
+				}
+				WasWardragobjekt=dragobjekt;
+				dragobjekt=null;
+					if(WasWardragobjekt==$('InventoryContainer')||WasWardragobjekt==$('Welt')){
+						GroesseAendern($('InventoryContainer'));
+					}
+					if(WasWardragobjekt==$('ChatBoxContainer')||WasWardragobjekt==$('Welt')){
+						GroesseAendern($('ChatBoxContainer'));
+					}
+					if(WasWardragobjekt==$('CharakterBoxContainer')||WasWardragobjekt==$('Welt')){
+						GroesseAendern($('CharakterBoxContainer'));
+					}
+			}
+
+			function drag(ereignis2){
+			//Wird aufgerufen, wenn die Maus bewegt wird und bewegt bei Bedarf das Objekt.
+				posxx=document.all ? window.event.clientX : ereignis2.pageX;
+				posyy=document.all ? window.event.clientY : ereignis2.pageY;
+				if(dragobjekt != null) {
+					dragobjekt.style.left=(posxx - dragx) + "px";
+					dragobjekt.style.top=(posyy - dragy) + "px";
+				}
+			}
+			HoeenCounter=0;
+			AlleFenster=['InventoryContainer','ChatBoxContainer','CharakterBoxContainer'];
+
+			GroesseAendern=function(wer){
+				if($('Welt').offsetLeft>=20&&wer.offsetLeft-($('Welt').offsetWidth/2)<$('Welt').offsetLeft){
+					wer.style.width=$('Welt').offsetLeft;
+					wer.style.left=0;
+				}else
+				if($('Welt').offsetLeft<=20||wer.offsetLeft+($('Welt').offsetLeft/2)>$('Welt').offsetLeft+$('Welt').offsetWidth-($('Welt').offsetWidth/2)){
+					wer.style.width=window.innerWidth-($('Welt').offsetLeft+$('Welt').offsetWidth);
+					wer.style.left=$('Welt').offsetLeft+$('Welt').offsetWidth;
+				}
+				if(WasWardragobjekt!=$('Welt')&&wer==WasWardragobjekt){
+					//WasWardragobjekt.style.top=0+'px';
+					for(all in AlleFenster){
+						if($(AlleFenster[all])==WasWardragobjekt){
+							eval($(AlleFenster[all])).style.top=0;
+						}
+						if($(AlleFenster[all])!=WasWardragobjekt){
+							if(($(AlleFenster[all]).offsetLeft<$('Welt').offsetLeft&&WasWardragobjekt.offsetLeft<$('Welt').offsetLeft)||($(AlleFenster[all]).offsetLeft>$('Welt').offsetLeft&&WasWardragobjekt.offsetLeft>$('Welt').offsetLeft)){
+								$(AlleFenster[all]).style.top=WasWardragobjekt.offsetHeight+HoeenCounter+'px';
+								WasWardragobjekt.style.height=50+'%';
+								$(AlleFenster[all]).style.height=50+'%';
+								HoeenCounter+=AlleFenster[all].offsetHeight;
+							}else{
+							WasWardragobjekt.style.height=100+'%';
+							}
+						}
+					}
+						HoeenCounter=0;
+				}
+				if($('InventoryContainer')==wer){
+					RandSkalierung(InventoryRandNamenArray);
+				}
+				if($('ChatBoxContainer')==wer){
+					RandSkalierung(ChatBoxRandNamenArray);
+				}
+				if($('CharakterBoxContainer')==wer){
+					RandSkalierung(CharakterBoxRandNamenArray);
+				}
+			}
+			BigWorld=false;
+			RiseWelt=function(){
+				if(BigWorld==false){
+					$('Welt').style.left=2+'%';
+					$('Welt').style.top=2+'%';
+					$('Welt').style.width=96+'%';
+					$('Welt').style.height=96+'%';
+					BigWorld=true;
+				}else
+				if(BigWorld==true){
+					$('Welt').style.left=2+'%';
+					$('Welt').style.top=2+'%';
+					$('Welt').style.width=750+'px';
+					$('Welt').style.height=750+'px';
+					BigWorld=false;
+				}
+			}
+			LogoButtonOn=false;
+			LogoButton=function(){
+				if(LogoButtonOn==false){
+					$('LogoContainer').style.visibility='visible';
+					$('Kugel1').style.visibility='visible';
+					$('Kugel2').style.visibility='visible';
+					$('Kugel3').style.visibility='visible';
+					LogoButtonOn=true;
+				}else
+				if(LogoButtonOn==true){
+					$('LogoContainer').style.visibility='hidden';
+					$('Kugel1').style.visibility='hidden';
+					$('Kugel2').style.visibility='hidden';
+					$('Kugel3').style.visibility='hidden';
+					LogoButtonOn=false;
+				}
+			}
+		</script>
+	</head>
+	<body onload="init('KarteA0')">
+	<image src="Hintergrund.jpg" class="A H100_0 W100_0"/>
+		<div id="LogoButton" class="A Logo" class="A H3_5 W3_5 L0_0 T0_0 transparent ZI16" onmousedown="LogoButton()"><image id="Logo" src="LogoButton.gif" /></div>
+		<div id="LogoContainer" class="A Logo VH"><image id="Logo" src="LogoA.png" onmousedown="LogoButton()"/></div>
+		<div id="Kugel1" class="A Kugel Kugel1 VH"><image id="Kugel1" src="Kugel.png" /></div><div id="Kugel1BlindButton" class="A ZI14 Kugel1BlindButton" onmouseover="LogoLight(1,0)" onmousemove="LogoLight(1,0)" onmouseout="LogoLight(1,1)" onmouseup="LogoLight(1,2)"></div>
+		<div id="Kugel2" class="A Kugel Kugel2 VH"><image id="Kugel2" src="Kugel.png" /></div><div id="Kugel2BlindButton" class="A ZI14 Kugel2BlindButton" onmouseover="LogoLight(2,0)" onmousemove="LogoLight(2,0)" onmouseout="LogoLight(2,1)" onmouseup="LogoLight(2,2)"></div>
+		<div id="Kugel3" class="A Kugel Kugel3 VH"><image id="Kugel3" src="Kugel.png" /></div><div id="Kugel3BlindButton" class="A ZI14 Kugel3BlindButton" onmouseover="LogoLight(3,0)" onmousemove="LogoLight(3,0)" onmouseout="LogoLight(3,1)" onmouseup="LogoLight(3,2)"></div>
+		<div id="InventoryContainer" class="A VH Inventory ZI10"><image class="A InventoryHintergrund" id="Inventory" src="InventoryHintergund.jpg" />
+			<div id="Prokel" class="A W10_0 H10_0 T90_0 L90_0 transparent ZI11" onmouseup="GroesseAendern($('InventoryContainer'))"></div>
+			<div id="InventoryRandOben" onmousedown="dragstart($('InventoryContainer'))"></div>
+			<div id="InventoryRandunten" onmousedown="dragstart($('InventoryContainer'))"></div>
+			<div id="InventoryRandLinks" onmousedown="dragstart($('InventoryContainer'))"></div>
+			<div id="InventoryRandRechts" onmousedown="dragstart($('InventoryContainer'))"></div>
+		</div>
+		<div id="ChatBoxContainer" class="A VH ChatBox ZI10"><image class="A ChatBoxHintergrund" id="ChatBox" src="ChatBoxHintergund.jpg" />
+			<div id="Prokel" class="A W10_0 H10_0 T90_0 L90_0 transparent ZI11" onmouseup="GroesseAendern($('ChatBoxContainer'))"></div>
+			<div id="ChatBoxRandOben" onmousedown="dragstart($('ChatBoxContainer'))"></div>
+			<div id="ChatBoxRandunten" onmousedown="dragstart($('ChatBoxContainer'))"></div>
+			<div id="ChatBoxRandLinks" onmousedown="dragstart($('ChatBoxContainer'))"></div>
+			<div id="ChatBoxRandRechts" onmousedown="dragstart($('ChatBoxContainer'))"></div>
+		</div>
+		<div id="CharakterBoxContainer" class="A VH CharakterBox ZI10"><image class="A CharakterBoxHintergrund" id="CharakterBox" src="CharakterBoxHintergund.jpg" />
+			<div id="Prokel" class="A W10_0 H10_0 T90_0 L90_0 transparent ZI11" onmouseup="GroesseAendern($('CharakterBoxContainer'))"></div>
+			<div id="CharakterBoxRandOben" onmousedown="dragstart($('CharakterBoxContainer'))"></div>
+			<div id="CharakterBoxRandunten" onmousedown="dragstart($('CharakterBoxContainer'))"></div>
+			<div id="CharakterBoxRandLinks" onmousedown="dragstart($('CharakterBoxContainer'))"></div>
+			<div id="CharakterBoxRandRechts" onmousedown="dragstart($('CharakterBoxContainer'))"></div>
+		</div>
+		<div id="Welt" class="A WeltKarte ZI1"><!--<div id="RiseWelt" class="A H3_5 W3_5 L0_0 T0_0 transparent ZI15" onmousedown="RiseWelt()"><image src="RiseWelt.gif"/></div>-->
+			<div id="theBackground"></div>
+			<div id="theErsteEbeneHTML"></div>
+			<div id="theZweiteEbeneHTML"></div>
+			<div id="theDritteEbeneHTML"></div>
+			<div id="theVierteEbeneHTML"></div>
+			<div id="theFuenfteEbeneHTML"></div>
+			<div id="theSechsteEbeneHTML"></div>
+			<div id="theFog"></div>
+
+			<img id="Axt" id="Axt" class="A L30_0 T30_0 W5_0 H5_0 ZI10 DN" src="Axt.png"/>
+	<!--
+			<img id="Krebs1" class="A L30_0 T30_0 W10_0 H10_0 ZI6" src="Krebs1Rechts.png" onmouseover="ChangeHaus(this,'Krebs1b')" onmouseout="ChangeHaus(this,'Krebs1')"/>
+	-->
+			<img id="Ast" class="A L30_0 T30_0 W10_0 H10_0 ZI6" src="Ast1.png" onmouseover="ChangeHaus(this,'Ast1b')" onmouseout="ChangeHaus(this,'Ast1')"/>
+
+			<div id="AvatarContainer" class="A L37_0 T33_0 W5_0 H5_0"><img id="Avatar" class="A L0_0 T0_0 W42_0 H42_0 ZI7" src="Avatar1.png" onmouseup="ChangeHaus(this,'Avatarb')" onmouseout="ChangeHaus(this,'Avatarb')"/></div>
+
+			<div id="theBuesche"></div>
+			<div id="theBaeume"></div>
+
+			<div id="SteinMiene"><img src="SteinMiene0.png" id="SteinMiene" onmouseover="ChangeHaus(this,'SteinMiene0B')" onmouseout="ChangeHaus(this,'SteinMiene0')" onmouseup="Farmen(this,'Steine')" class="A T45_0 L45_0 W10_0 H10_0 ZI7"/></div>
+
+			<div id="LadeBalkenContainer"><img src="LadeBalken5.png" id="LadeBalken"/></div>
+			<div id="RandOben" onmousedown="dragstart($('Welt'))"></div>
+			<div id="Randunten" onmousedown="dragstart($('Welt'))"></div>
+			<div id="RandLinks" onmousedown="dragstart($('Welt'))"></div>
+			<div id="RandRechts" onmousedown="dragstart($('Welt'))"></div>
+			<div id="AlleEinheiten" class="A T50_0 L0-0 W4 H50_0 ZI10">
+				<div id="HolzEinheit1" class="A T96_0 L8_0 W40_0 H4_0 blue"></div>
+				<div id="HolzEinheit2" class="A T91_0 L8_0 W40_0 H4_0 blue"></div>
+				<div id="HolzEinheit4" class="A T86_0 L8_0 W40_0 H4_0 blue"></div>
+				<div id="HolzEinheit8" class="A T81_0 L8_0 W40_0 H4_0 blue"></div>
+				<div id="HolzEinheit16" class="A T76_0 L8_0 W40_0 H4_0 blue"></div>
+				<div id="HolzEinheit32" class="A T71_0 L8_0 W40_0 H4_0 blue"></div>
+				<div id="HolzEinheit64" class="A T66_0 L8_0 W40_0 H4_0 blue"></div>
+				<div id="HolzEinheit128" class="A T61_0 L8_0 W40_0 H4_0 blue"></div>
+				<div id="HolzEinheit256" class="A T56_0 L8_0 W40_0 H4_0 blue"></div>
+				<div id="SteineEinheit1" class="A T96_0 L52_0 W40_0 H4_0 blue"></div>
+				<div id="SteineEinheit2" class="A T91_0 L52_0 W40_0 H4_0 blue"></div>
+				<div id="SteineEinheit4" class="A T86_0 L52_0 W40_0 H4_0 blue"></div>
+				<div id="SteineEinheit8" class="A T81_0 L52_0 W40_0 H4_0 blue"></div>
+				<div id="SteineEinheit16" class="A T76_0 L52_0 W40_0 H4_0 blue"></div>
+				<div id="SteineEinheit32" class="A T71_0 L52_0 W40_0 H4_0 blue"></div>
+				<div id="SteineEinheit64" class="A T66_0 L52_0 W40_0 H4_0 blue"></div>
+				<div id="SteineEinheit128" class="A T61_0 L52_0 W40_0 H4_0 blue"></div>
+				<div id="SteineEinheit256" class="A T56_0 L52_0 W40_0 H4_0 blue"></div>
+			</div>
+		</div>
+	</body>
+</html>

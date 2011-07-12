@@ -1,0 +1,155 @@
+<html>
+	<head>
+		<title>Coerling</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="Css.css"/>
+		<style>
+			body{
+				overflow:hidden;
+			}
+			.Box{
+				position:absolute;
+				left:40%;
+				top:90%;
+				height:40px;
+				width:40px;
+				z-index:2;
+			}
+			.Zielscheibe{
+				position:absolute;
+				left:30%;
+				top:3%;
+				height:15%;
+				width:20%;
+				z-index:1;
+			}
+			.Welt{
+				position:absolute;
+				left:0;
+				top:90%;
+				height:10%;
+				width:100%;
+				background-color:yellow;
+			}
+			.WurfBereichsSperre{
+				position:absolute;
+				top:85%;
+				height:5%;
+				width:100%;
+				background-color:green;
+				z-index:10;
+			}
+			.WurfBereichsSperreAusgabe{
+				position:absolute;
+				top:70%;
+				height:20%;
+				width:100%;
+				z-index:10;
+			}
+		</style>
+		<script type="text/javascript">
+		//.Tiny
+			$=function(id){return(document.getElementById(id));};
+
+			speed=0;
+			CoerlerAngelegt=false;
+			Dragbarkeit=false;
+			dragobjekt=null;
+			var dragx=0;
+			var dragy=0;
+			var posxx=0;
+			var posyy=0;
+
+		//Wird aufgerufen, wenn ein Objekt bewegt werden soll.
+			dragstart=function(element){
+				if(Dragbarkeit==true){
+					dragobjekt=element;
+					element.style.left=posxx-20;
+					element.style.top=posyy-20;
+					dragx=posxx-dragobjekt.offsetLeft;
+					dragy=posyy-dragobjekt.offsetTop;
+				}
+			}
+
+		//Wird aufgerufen, wenn ein Objekt nicht mehr bewegt werden soll.
+			dragstop=function(){
+				WasWardragobjekt=dragobjekt;
+				dragobjekt=null;
+			}
+
+			drag=function(ereignis2){
+				posxx=document.all?window.event.clientX:ereignis2.pageX;
+				posyy=document.all?window.event.clientY:ereignis2.pageY;
+				if(dragobjekt != null){
+					dragobjekt.style.left=(posxx-dragx)+"px";
+					dragobjekt.style.top=(posyy-dragy)+"px";
+				}
+			}
+
+			MouseUp=function(Ereignis){
+				MausX=Ereignis.clientX-$('Welt').offsetLeft;
+				MausY=Ereignis.clientY-$('Welt').offsetTop;
+				dragstop();
+			}
+
+			document.onmouseup=MouseUp;
+
+			draginit=function(){
+				document.onmousemove=drag;
+			}
+
+			derCounter=0;
+			derBewegungsCounter=0;
+
+			Zaehl=function(){
+				derCounter++;
+			}
+
+			BewegDenCoerler=function(){
+				speed--;
+				if(speed>0){
+					$('Box1').style.left=$('Box1').offsetLeft-CoerlerVerschiebungLeft;
+					$('Box1').style.top=$('Box1').offsetTop-CoerlerVerschiebungTop;
+				}
+				derBewegungsCounter--;
+				if(speed>0){
+					setTimeout('BewegDenCoerler()',500/speed);
+				}
+			}
+			StartCounter=function(){
+				if(CoerlerAngelegt==true){
+					CounterInterval=setInterval('Zaehl()',10);
+					WoIstDerCoerlerEingetroffenLeft=posxx;
+				}
+			}
+			ZeigCounter=function(){
+				if(CoerlerAngelegt==true){
+					clearInterval(CounterInterval);
+					CoerlerAngelegt=false;
+					WoIstDerCoerlerAusgetretenLeft=posxx;
+					CoerlerVerschiebungLeft=(WoIstDerCoerlerEingetroffenLeft-WoIstDerCoerlerAusgetretenLeft)/2;
+					CoerlerVerschiebungTop=$('WurfBereichsSperre').offsetHeight/2;
+					//alert(derCounter);
+					//alert(WoIstDerCoerlerEingetroffenLeft-WoIstDerCoerlerAusgetretenLeft);
+					derBewegungsCounter=derCounter;
+					speed=40-derBewegungsCounter;
+					if(speed<=0){
+						speed=0;
+					}
+					derCounter=0;
+					BewegDenCoerler();
+				}
+			}
+		</script>
+	</head>
+	<body onload="draginit()"><img id="EisHintergrund" class="A H100_0 W100_0" src=EisHintergrund.png />
+		<div id="WurfBereichsSperreAusgabe" onmouseover="ZeigCounter()" class="WurfBereichsSperreAusgabe"></div>
+		<div id="WurfBereichsSperre" onmouseover="dragstop(),Dragbarkeit=false,StartCounter()" class="WurfBereichsSperre"></div>
+		<div id="Welt" onmouseover="dragstart($('Box1')),Dragbarkeit=true" onmouseout="dragstop(),Dragbarkeit=false"class="Welt"><img id="Stehflaeche" class="A H100_0 W100_0" src=Stehflaeche.png /></div>
+		<div id="Box1" class="Box" onmousemove="dragstart($('Box1')),Dragbarkeit=true,CoerlerAngelegt=true;" onmouseover="dragstart($('Box1')),Dragbarkeit=true,CoerlerAngelegt=true;">
+			<img id="Coerler" src=Coerler.png />
+		</div>
+		<div id="Zielscheibecontainer" class="Zielscheibe">
+			<img id="Zielscheibe" src=Zielscheibe.png />
+		</div>
+	</body>
+</html>
